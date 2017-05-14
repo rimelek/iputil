@@ -1,0 +1,19 @@
+{
+    "name": "rimelek/ip-util",
+    "description": "Handle IP addresses and ranges",
+    "authors": [
+        {
+            "name": "Takács Ákos",
+            "email": "rimelek@rimelek.hu"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "Rimelek\\IPUtil\\": "src/"
+        }
+    }
+}
