@@ -41,11 +41,11 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
      * Create IPv4Address instance from CIDR prefix
      * 
      * @param int $cidrPrefix CIDRPrefix
-     * @return self
+     * @return IPv4Address|AbstractIPAddress
      */
     public static function fromCIDRPrefix($cidrPrefix)
     {
-        return self::fromBinary(self::CIDRPrefixToBinaryMask($cidrPrefix, __CLASS__));
+        return parent::fromCIDRPrefix($cidrPrefix);
     }
     
     /**
@@ -119,7 +119,10 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
     }
 
     /**
-     * @inheritDoc
+     * Create an IPv4 address from binary data
+     *
+     * @param string $binary
+     * @return AbstractIPAddress|IPv4Address
      */
     public static function fromBinary($binary)
     {

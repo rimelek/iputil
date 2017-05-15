@@ -59,11 +59,11 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
      * Create IPv6Address instance from CIDR prefix
      * 
      * @param int $cidrPrefix Integer from 0 to 128
-     * @return IPv6Address
+     * @return IPv6Address|AbstractIPAddress
      */
     public static function fromCIDRPrefix($cidrPrefix)
     {
-        return self::fromBinary(self::CIDRPrefixToBinaryMask($cidrPrefix));
+        return parent::fromCIDRPrefix($cidrPrefix);
     }
     
     /**
@@ -136,7 +136,10 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Create an IP address from binary data
+     *
+     * @param string $binary
+     * @return AbstractIPAddress|IPv6Address
      */
     public static function fromBinary($binary)
     {

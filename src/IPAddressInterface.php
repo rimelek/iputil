@@ -43,6 +43,14 @@ interface IPAddressInterface
     public static function fromBinary($binary);
 
     /**
+     * Create IPv4Address instance from CIDR prefix
+     *
+     * @param int $cidrPrefix CIDRPrefix
+     * @return self
+     */
+    public static function fromCIDRPrefix($cidrPrefix);
+
+    /**
      * Check if to IP are equal.
      *
      * $this is equal to $ip if their binary representations are the same.

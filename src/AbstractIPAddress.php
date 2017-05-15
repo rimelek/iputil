@@ -101,7 +101,7 @@ abstract class AbstractIPAddress
      * Create an IP address from 0-1 series
      * 
      * @param string $bitString
-     * @return IPAddressInterface
+     * @return static
      */
     protected static function fromBitString($bitString)
     {
@@ -120,11 +120,22 @@ abstract class AbstractIPAddress
      * Create an IP address from binary data
      * 
      * @param string $binary
-     * @return IPAddressInterface
+     * @return static
      */
     protected static function fromBinary($binary)
     {
         return new static($binary);
+    }
+
+    /**
+     * Create IPAddress instance from CIDR prefix
+     *
+     * @param int $cidrPrefix CIDRPrefix
+     * @return static
+     */
+    protected static function fromCIDRPrefix($cidrPrefix)
+    {
+        return self::fromBinary(self::CIDRPrefixToBinaryMask($cidrPrefix));
     }
     
     /**
@@ -153,9 +164,9 @@ abstract class AbstractIPAddress
         return (
                 (get_class($this) === get_class($ip) and $this->toBinary() === $ip->toBinary())
                 or
-                ($this instanceof IPv6Address ? $this->toBinary() : $this->toIPv6()->toBinary())
+                ($this instanceof IPv4Address ? $this->toIPv6()->toBinary() : $this->toBinary())
                  ===
-                ($ip instanceof IPv6Address ? $ip->toBinary() : $ip->toIPv6()->toBinary())
+                ($ip instanceof IPv4Address ? $ip->toIPv6()->toBinary() : $ip->toBinary())
         );
     }
     

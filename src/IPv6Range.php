@@ -18,7 +18,7 @@ class IPv6Range extends AbstractIPRange
      * 
      * @param IPv6Address $min
      * @param IPv6Address $max
-     * @return self
+     * @return IPv6Range|AbstractIPRange
      */
     public static function fromIPInterval($min, $max)
     {
@@ -29,7 +29,7 @@ class IPv6Range extends AbstractIPRange
      *
      * @param IPv6Address $IP Must be IPv6
      * @param int $cidrPrefix
-     * @return self
+     * @return IPv6Range|AbstractIPRange
      */
     public static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
     {

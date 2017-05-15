@@ -20,7 +20,7 @@ class IPv4Range extends AbstractIPRange
      * 
      * @param IPv4Address $min
      * @param IPv4Address $max
-     * @return self
+     * @return IPv4Range|AbstractIPRange
      */
     public static function fromIPInterval($min, $max)
     {
@@ -31,7 +31,7 @@ class IPv4Range extends AbstractIPRange
      * 
      * @param IPv4Address $IP
      * @param int $cidrPrefix 
-     * @return self
+     * @return IPv4Range|AbstractIPRange
      */
     public static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
     {

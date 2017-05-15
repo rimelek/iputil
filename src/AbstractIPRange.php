@@ -23,10 +23,10 @@ abstract class AbstractIPRange
     private $cidrPrefix = null;
 
     /**
-     * @param IPAddressInterface $min
-     * @param IPAddressInterface $max
+     * @param AbstractIPAddress $min
+     * @param AbstractIPAddress $max
      */
-    protected function __construct(IPAddressInterface $min, IPAddressInterface $max)
+    protected function __construct(AbstractIPAddress $min, AbstractIPAddress $max)
     {
         $min = clone $min;
         $max = clone $max;
@@ -82,7 +82,9 @@ abstract class AbstractIPRange
      */
     public function toString()
     {
-        return $this->getMinIP() . ' - ' . $this->getMaxIP();
+        return $this->getMinIP()->toString()
+            . ' - '
+            . $this->getMaxIP()->toString();
     }
     
     /**
@@ -107,7 +109,7 @@ abstract class AbstractIPRange
      *
      * @param AbstractIPAddress $min
      * @param AbstractIPAddress $max
-     * @return AbstractIPRange
+     * @return static
      */
     protected static function fromIPInterval($min, $max)
     {
@@ -116,21 +118,19 @@ abstract class AbstractIPRange
 
     /**
      *
-     * @param AbstractIPAddress $IP
+     * @param IPAddressInterface $IP
      * @param int $cidrPrefix
-     * @return AbstractIPRange
+     * @return static
      */
     protected static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
     {
-        $class = self::getSupportedIPClassName();
-
         $cidrBinary = $IP->fromCIDRPrefix($cidrPrefix)->toBinary();
         $min = $IP->toBinary() & $cidrBinary;
         $max = $min | (~$cidrBinary);
         $range = self::fromIPInterval(
             call_user_func([get_class($IP), 'fromBinary'], $min),
-            call_user_func([get_class($IP), 'fromBinary'], $max),
-            $class);
+            call_user_func([get_class($IP), 'fromBinary'], $max)
+            );
         $range->cidrPrefix = $cidrPrefix;
         return $range;
     }
@@ -150,12 +150,16 @@ abstract class AbstractIPRange
         $rangeMax = $range->getMaxIP();
         
         if ($range instanceof IPv6Range and $this instanceof IPv4Range) {
+            /* @var $thisMin IPv4Address */
             $thisMin = $thisMin->toIPv6();
+            /* @var $thisMax IPv4Address */
             $thisMax = $thisMax->toIPv6();
         }
         
         if ($range instanceof IPv4Range and $this instanceof IPv6Range) {
+            /* @var $rangeMin IPv4Address */
             $rangeMin = $rangeMin->toIPv6();
+            /* @var $rangeMax IPv4Address */
             $rangeMax = $rangeMax->toIPv6();
         }
         
@@ -261,14 +265,6 @@ abstract class AbstractIPRange
         
         return $ranges;
         
-    }
-
-    /**
-     * @return string
-     */
-    private function getSupportedIPClassName()
-    {
-        return static::class === IPv6Range::class ? IPv6Address::class : IPv4Address::class;
     }
 
     /**
