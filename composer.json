@@ -1,6 +1,7 @@
 {
     "name": "rimelek/ip-util",
     "description": "Handle IP addresses and ranges",
+    "license": "MIT",
     "authors": [
         {
             "name": "Takács Ákos",
