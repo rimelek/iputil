@@ -48,6 +48,6 @@ it needs absolute path.
 
 This custom interpreter was created to use with PHPStorm. PHPStorm supports to choose Docker container as
 interpreter, but in this case, Code Coverage does not work with phpunit.phar and needs to be installed via composer.
-I did not want to install it via composer, I am the reason why everyone have to suffer :)
+I did not want to install it via composer, so I am the reason why everyone have to suffer :)
 
 Of course, in your project, you are free to use composer.
