@@ -28,12 +28,12 @@ class IPv6Range extends AbstractIPRange
     /**
      *
      * @param IPv6Address $IP Must be IPv6
-     * @param int $cidrPrefix
+     * @param int $CIDRPrefix
      * @return IPv6Range|AbstractIPRange
      */
-    public static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
+    public static function fromIPWithCIDRPrefix($IP, $CIDRPrefix)
     {
-        return parent::fromIPWithCIDRPrefix($IP, $cidrPrefix);
+        return parent::fromIPWithCIDRPrefix($IP, $CIDRPrefix);
     }
 }
 

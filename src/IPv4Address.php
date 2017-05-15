@@ -38,14 +38,14 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
     }
     
     /**
-     * Create IPv4Address instance from CIDR prefix
+     * Create IPv4Address instance from C.I.D.R. prefix
      * 
-     * @param int $cidrPrefix CIDRPrefix
+     * @param int $CIDRPrefix CIDRPrefix
      * @return IPv4Address|AbstractIPAddress
      */
-    public static function fromCIDRPrefix($cidrPrefix)
+    public static function fromCIDRPrefix($CIDRPrefix)
     {
-        return parent::fromCIDRPrefix($cidrPrefix);
+        return parent::fromCIDRPrefix($CIDRPrefix);
     }
     
     /**
@@ -140,9 +140,9 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
     /**
      * @inheritDoc
      */
-    public static function CIDRPrefixToBinaryMask($cidrPrefix)
+    public static function CIDRPrefixToBinaryMask($CIDRPrefix)
     {
-        return parent::CIDRPrefixToBinaryMask($cidrPrefix);
+        return parent::CIDRPrefixToBinaryMask($CIDRPrefix);
     }
 }
 

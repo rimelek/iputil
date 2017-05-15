@@ -43,12 +43,12 @@ interface IPAddressInterface
     public static function fromBinary($binary);
 
     /**
-     * Create IPv4Address instance from CIDR prefix
+     * Create IPv4Address instance from C.I.D.R. prefix
      *
-     * @param int $cidrPrefix CIDRPrefix
+     * @param int $CIDRPrefix CIDRPrefix
      * @return self
      */
-    public static function fromCIDRPrefix($cidrPrefix);
+    public static function fromCIDRPrefix($CIDRPrefix);
 
     /**
      * Check if to IP are equal.
@@ -61,10 +61,10 @@ interface IPAddressInterface
     public function equals(IPAddressInterface $ip);
 
     /**
-     * CIDR prefix converted to binary subnet mask
+     * C.I.D.R. prefix converted to binary subnet mask
      *
-     * @param int $cidrPrefix
+     * @param int $CIDRPrefix
      * @return string
      */
-    public static function CIDRPrefixToBinaryMask($cidrPrefix);
+    public static function CIDRPrefixToBinaryMask($CIDRPrefix);
 }

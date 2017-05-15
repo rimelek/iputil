@@ -128,14 +128,14 @@ abstract class AbstractIPAddress
     }
 
     /**
-     * Create IPAddress instance from CIDR prefix
+     * Create IPAddress instance from C.I.D.R. prefix
      *
-     * @param int $cidrPrefix CIDRPrefix
+     * @param int $CIDRPrefix CIDRPrefix
      * @return static
      */
-    protected static function fromCIDRPrefix($cidrPrefix)
+    protected static function fromCIDRPrefix($CIDRPrefix)
     {
-        return self::fromBinary(self::CIDRPrefixToBinaryMask($cidrPrefix));
+        return self::fromBinary(self::CIDRPrefixToBinaryMask($CIDRPrefix));
     }
     
     /**
@@ -171,19 +171,19 @@ abstract class AbstractIPAddress
     }
     
     /**
-     * CIDR prefix converted to binary subnet mask
+     * C.I.D.R. prefix converted to binary subnet mask
      *
-     * @param int $cidrPrefix
+     * @param int $CIDRPrefix
      * @return string
      */
-    protected static function CIDRPrefixToBinaryMask($cidrPrefix)
+    protected static function CIDRPrefixToBinaryMask($CIDRPrefix)
     {
 
         $sizeInBits = static::class === IPv6Address::class ? 128 : 32;
         
-        $cidrPrefix = min($cidrPrefix, $sizeInBits);
-        $_1 = intval($cidrPrefix / 8);
-        $_2 = $cidrPrefix % 8;
+        $CIDRPrefix = min($CIDRPrefix, $sizeInBits);
+        $_1 = intval($CIDRPrefix / 8);
+        $_2 = $CIDRPrefix % 8;
         $_3 = ($sizeInBits/8) - ($_1 + intval($_2 !== 0));
         $binary = '';
         if ($_1) {

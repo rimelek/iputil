@@ -18,9 +18,9 @@ abstract class AbstractIPRange
     /**
      * If it was created by fromIPv4WithCIDRPrefix
      *
-     * @var int $cidrPrefix
+     * @var int $CIDRPrefix
      */
-    private $cidrPrefix = null;
+    private $CIDRPrefix = null;
 
     /**
      * @param AbstractIPAddress $min
@@ -57,13 +57,13 @@ abstract class AbstractIPRange
     }
     
     /**
-     * CIDR Prefix
+     * C.I.D.R. Prefix
      * 
      * @return int|null
      */
     public function getCIDRPrefix()
     {
-        return $this->cidrPrefix;
+        return $this->CIDRPrefix;
     }
     
     /**
@@ -119,19 +119,19 @@ abstract class AbstractIPRange
     /**
      *
      * @param IPAddressInterface $IP
-     * @param int $cidrPrefix
+     * @param int $CIDRPrefix
      * @return static
      */
-    protected static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
+    protected static function fromIPWithCIDRPrefix($IP, $CIDRPrefix)
     {
-        $cidrBinary = $IP->fromCIDRPrefix($cidrPrefix)->toBinary();
-        $min = $IP->toBinary() & $cidrBinary;
-        $max = $min | (~$cidrBinary);
+        $CIDRBinary = $IP->fromCIDRPrefix($CIDRPrefix)->toBinary();
+        $min = $IP->toBinary() & $CIDRBinary;
+        $max = $min | (~$CIDRBinary);
         $range = self::fromIPInterval(
             call_user_func([get_class($IP), 'fromBinary'], $min),
             call_user_func([get_class($IP), 'fromBinary'], $max)
             );
-        $range->cidrPrefix = $cidrPrefix;
+        $range->CIDRPrefix = $CIDRPrefix;
         return $range;
     }
     
@@ -194,38 +194,38 @@ abstract class AbstractIPRange
         if ($this->getMinIP()->equals($this->getMaxIP())) {
             $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP(), $sizeInBits);
         } else {
-            $dmin = $this->getMinIP()->toBitString();
-            $dmax = $this->getMaxIP()->toBitString();
-            $countFixBits = self::countFixBits($dmin, $dmax);
+            $minBS = $this->getMinIP()->toBitString();
+            $maxBS = $this->getMaxIP()->toBitString();
+            $countFixBits = self::countFixBits($minBS, $maxBS);
 
-            if (rtrim(substr($dmin, $countFixBits), '0') === "" and 
-                rtrim(substr($dmax, $countFixBits), '1') === "") {
-                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($dmin), $countFixBits);
+            if (rtrim(substr($minBS, $countFixBits), '0') === "" and
+                rtrim(substr($maxBS, $countFixBits), '1') === "") {
+                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($minBS), $countFixBits);
             } else {
                 // 1.
-                $pos = strrpos($dmin, '1', $countFixBits);
+                $pos = strrpos($minBS, '1', $countFixBits);
                 if ($pos !== false) {
-                    $cidrPrefix = $pos+1;
-                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($dmin), $cidrPrefix);
-                    $dmin = rtrim(rtrim($dmin, '0'), '1');
+                    $CIDRPrefix = $pos+1;
+                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($minBS), $CIDRPrefix);
+                    $minBS = rtrim(rtrim($minBS, '0'), '1');
                     // 2.
-                    $pos = strlen($dmin)-1;
+                    $pos = strlen($minBS)-1;
                     while ($pos > $countFixBits) {
-                        $dmin{$pos} = '1';
-                        $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(str_pad($dmin, $sizeInBits, '0', STR_PAD_RIGHT)), $pos+1);
-                        $dmin = rtrim($dmin, '1');
-                        $pos = strlen($dmin)-1;
+                        $minBS{$pos} = '1';
+                        $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(str_pad($minBS, $sizeInBits, '0', STR_PAD_RIGHT)), $pos+1);
+                        $minBS = rtrim($minBS, '1');
+                        $pos = strlen($minBS)-1;
                     }
                 }
                 // 4.
-                $end = max((strrpos($dmax, '0') ?: -1)+1, $countFixBits);
+                $end = max((strrpos($maxBS, '0') ?: -1)+1, $countFixBits);
                 $pos = $countFixBits;
-                while (($pos = strpos($dmax, '1', $pos+1)) !== false and $pos < $end) {
-                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(substr_replace($dmax, '0', $pos, 1)), $pos+1);
+                while (($pos = strpos($maxBS, '1', $pos+1)) !== false and $pos < $end) {
+                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(substr_replace($maxBS, '0', $pos, 1)), $pos+1);
                 }
                 
                 // 5.
-                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($dmax), $end);
+                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($maxBS), $end);
             }                      
         }
         if ($firstAndLastRange['lastRange'] !== null) {

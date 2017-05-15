@@ -56,14 +56,14 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
     }
     
     /**
-     * Create IPv6Address instance from CIDR prefix
+     * Create IPv6Address instance from C.I.D.R. prefix
      * 
-     * @param int $cidrPrefix Integer from 0 to 128
+     * @param int $CIDRPrefix Integer from 0 to 128
      * @return IPv6Address|AbstractIPAddress
      */
-    public static function fromCIDRPrefix($cidrPrefix)
+    public static function fromCIDRPrefix($CIDRPrefix)
     {
-        return parent::fromCIDRPrefix($cidrPrefix);
+        return parent::fromCIDRPrefix($CIDRPrefix);
     }
     
     /**
@@ -115,9 +115,9 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
         $binary = $this->toBinary();
         $len = strlen($binary);
         return (
-            $len >= 6  //minimum 6 bájt
-            and substr($binary, 0, -6) === str_repeat("\0", $len-6) //Az utolsó 6 bájt előtt nulla
-            and substr($binary, -6, -4) === "\xFF\xFF" //Az 5. és 6. bájt 255
+            $len >= 6  // minimum 6 byte
+            and substr($binary, 0, -6) === str_repeat("\0", $len-6) // zeros before the last 6 byte
+            and substr($binary, -6, -4) === "\xFF\xFF" // 5. and 6. bytes are 255
         );
     }
     
@@ -157,8 +157,8 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
     /**
      * @inheritDoc
      */
-    public static function CIDRPrefixToBinaryMask($cidrPrefix)
+    public static function CIDRPrefixToBinaryMask($CIDRPrefix)
     {
-        return parent::CIDRPrefixToBinaryMask($cidrPrefix);
+        return parent::CIDRPrefixToBinaryMask($CIDRPrefix);
     }
 }

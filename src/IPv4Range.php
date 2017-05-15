@@ -30,11 +30,11 @@ class IPv4Range extends AbstractIPRange
     /**
      * 
      * @param IPv4Address $IP
-     * @param int $cidrPrefix 
+     * @param int $CIDRPrefix
      * @return IPv4Range|AbstractIPRange
      */
-    public static function fromIPWithCIDRPrefix($IP, $cidrPrefix)
+    public static function fromIPWithCIDRPrefix($IP, $CIDRPrefix)
     {
-        return parent::fromIPWithCIDRPrefix($IP, $cidrPrefix);
+        return parent::fromIPWithCIDRPrefix($IP, $CIDRPrefix);
     }
 }
