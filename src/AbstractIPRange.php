@@ -149,12 +149,12 @@ abstract class AbstractIPRange
         $rangeMin = $range->getMinIP();
         $rangeMax = $range->getMaxIP();
         
-        if ($range instanceof IPv6RangeAbstract and $this instanceof IPv4RangeAbstract) {
+        if ($range instanceof IPv6Range and $this instanceof IPv4Range) {
             $thisMin = $thisMin->toIPv6();
             $thisMax = $thisMax->toIPv6();
         }
         
-        if ($range instanceof IPv4RangeAbstract and $this instanceof IPv6RangeAbstract) {
+        if ($range instanceof IPv4Range and $this instanceof IPv6Range) {
             $rangeMin = $rangeMin->toIPv6();
             $rangeMax = $rangeMax->toIPv6();
         }
@@ -167,8 +167,8 @@ abstract class AbstractIPRange
      */
     public function toCIDRPrefixedRanges()
     {
-        $sizeInBits = static::class === IPv6RangeAbstract::class ? 128 : 32;
-        $sizeInBytes = static::class === IPv6RangeAbstract::class ? 16 : 4;
+        $sizeInBits = static::class === IPv6Range::class ? 128 : 32;
+        $sizeInBytes = static::class === IPv6Range::class ? 16 : 4;
         // In case of full range
         if ($this->getMinIP()->toBinary() === str_repeat("\0", $sizeInBytes)
             and $this->getMaxIP()->toBinary() === str_repeat("\xFF", $sizeInBytes)) {
@@ -268,7 +268,7 @@ abstract class AbstractIPRange
      */
     private function getSupportedIPClassName()
     {
-        return static::class === IPv6RangeAbstract::class ? IPv6Address::class : IPv4Address::class;
+        return static::class === IPv6Range::class ? IPv6Address::class : IPv4Address::class;
     }
 
     /**

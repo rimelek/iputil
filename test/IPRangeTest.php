@@ -5,8 +5,8 @@ namespace Rimelek\IPUtil\Test;
 use Rimelek\IPUtil\AbstractIPRange;
 use PHPUnit\Framework\TestCase;
 use Rimelek\IPUtil\IPv4Address;
-use Rimelek\IPUtil\IPv4RangeAbstract;
-use Rimelek\IPUtil\IPv6RangeAbstract;
+use Rimelek\IPUtil\IPv4Range;
+use Rimelek\IPUtil\IPv6Range;
 
 class IPRangeTest extends TestCase
 {
@@ -26,7 +26,7 @@ class IPRangeTest extends TestCase
 
     public function testToString()
     {
-        $range = IPv4RangeAbstract::fromBinaryInterval(str_repeat("\0", 16), str_repeat("\xFF", 16));
+        $range = IPv4Range::fromBinaryInterval(str_repeat("\0", 16), str_repeat("\xFF", 16));
         $this->assertEquals($range->toString(), (string) $range);
     }
 
@@ -56,16 +56,16 @@ class IPRangeTest extends TestCase
         $ip43 = IPv4Address::fromBinary("\x7F\x00\x00\x03");
         $ip44 = IPv4Address::fromBinary("\x7F\x00\x00\x04");
 
-        $this->assertTrue(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)->in(IPv4RangeAbstract::fromIPInterval($ip41, $ip44)));
-        $this->assertTrue(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)->in(IPv4RangeAbstract::fromIPInterval($ip41, $ip43)));
-        $this->assertTrue(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)->in(IPv4RangeAbstract::fromIPInterval($ip42, $ip44)));
-        $this->assertTrue(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)->in(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)));
+        $this->assertTrue(IPv4Range::fromIPInterval($ip42, $ip43)->in(IPv4Range::fromIPInterval($ip41, $ip44)));
+        $this->assertTrue(IPv4Range::fromIPInterval($ip42, $ip43)->in(IPv4Range::fromIPInterval($ip41, $ip43)));
+        $this->assertTrue(IPv4Range::fromIPInterval($ip42, $ip43)->in(IPv4Range::fromIPInterval($ip42, $ip44)));
+        $this->assertTrue(IPv4Range::fromIPInterval($ip42, $ip43)->in(IPv4Range::fromIPInterval($ip42, $ip43)));
 
-        $this->assertFalse(IPv4RangeAbstract::fromIPInterval($ip41, $ip44)->in(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)));
-        $this->assertFalse(IPv4RangeAbstract::fromIPInterval($ip41, $ip44)->in(IPv4RangeAbstract::fromIPInterval($ip41, $ip43)));
-        $this->assertFalse(IPv4RangeAbstract::fromIPInterval($ip41, $ip44)->in(IPv4RangeAbstract::fromIPInterval($ip42, $ip44)));
+        $this->assertFalse(IPv4Range::fromIPInterval($ip41, $ip44)->in(IPv4Range::fromIPInterval($ip42, $ip43)));
+        $this->assertFalse(IPv4Range::fromIPInterval($ip41, $ip44)->in(IPv4Range::fromIPInterval($ip41, $ip43)));
+        $this->assertFalse(IPv4Range::fromIPInterval($ip41, $ip44)->in(IPv4Range::fromIPInterval($ip42, $ip44)));
 
-        $this->assertTrue(IPv6RangeAbstract::fromIPInterval($ip42->toIPv6(), $ip43->toIPv6())->in(IPv4RangeAbstract::fromIPInterval($ip41, $ip44)));
-        $this->assertTrue(IPv4RangeAbstract::fromIPInterval($ip42, $ip43)->in(IPv6RangeAbstract::fromIPInterval($ip41->toIPv6(), $ip44->toIPv6())));
+        $this->assertTrue(IPv6Range::fromIPInterval($ip42->toIPv6(), $ip43->toIPv6())->in(IPv4Range::fromIPInterval($ip41, $ip44)));
+        $this->assertTrue(IPv4Range::fromIPInterval($ip42, $ip43)->in(IPv6Range::fromIPInterval($ip41->toIPv6(), $ip44->toIPv6())));
     }
 }

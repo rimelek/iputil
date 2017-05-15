@@ -3,7 +3,7 @@
 namespace Rimelek\IPUtil\Test;
 
 use Rimelek\IPUtil\IPv4Address;
-use Rimelek\IPUtil\IPv4RangeAbstract;
+use Rimelek\IPUtil\IPv4Range;
 use PHPUnit\Framework\TestCase;
 
 class IPv4RangeTest extends TestCase
@@ -29,7 +29,7 @@ class IPv4RangeTest extends TestCase
     public function testFromIPWithCIDRPrefix($binary, $prefix, $minBinary, $maxBinary)
     {
         $ip = IPv4Address::fromBinary($binary);
-        $range = IPv4RangeAbstract::fromIPWithCIDRPrefix($ip, $prefix);
+        $range = IPv4Range::fromIPWithCIDRPrefix($ip, $prefix);
         $this->assertEquals($minBinary, $range->getMinIP()->toBinary());
         $this->assertEquals($maxBinary, $range->getMaxIP()->toBinary());
 
@@ -101,7 +101,7 @@ class IPv4RangeTest extends TestCase
      */
     public function testToCIDRPrefixedRanges($from, $to, $expected)
     {
-        $ranges = IPv4RangeAbstract::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
+        $ranges = IPv4Range::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
 
         if (count($expected) === count($ranges)) {
             foreach ($ranges as $i => $range) {

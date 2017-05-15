@@ -2,7 +2,7 @@
 namespace Rimelek\IPUtil;
 
 
-class IPv4RangeAbstract extends AbstractIPRange
+class IPv4Range extends AbstractIPRange
 {
     
     /**

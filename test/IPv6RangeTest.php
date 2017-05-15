@@ -4,7 +4,7 @@ namespace Rimelek\IPUtil\Test;
 
 use PHPUnit\Framework\TestCase;
 use Rimelek\IPUtil\IPv6Address;
-use Rimelek\IPUtil\IPv6RangeAbstract;
+use Rimelek\IPUtil\IPv6Range;
 
 class IPv6RangeTest extends TestCase
 {
@@ -13,9 +13,9 @@ class IPv6RangeTest extends TestCase
         $a = IPv6Address::fromString('1:2:3:4:5:6:7:8');
         $b = IPv6Address::fromString('8:7:6:5:4:3:2:1');
 
-        $range = IPv6RangeAbstract::fromBinaryInterval($a->toBinary(), $b->toBinary());
+        $range = IPv6Range::fromBinaryInterval($a->toBinary(), $b->toBinary());
 
-        $this->assertInstanceOf(IPv6RangeAbstract::class, $range);
+        $this->assertInstanceOf(IPv6Range::class, $range);
     }
 
     public function testFromIPInterval()
@@ -23,9 +23,9 @@ class IPv6RangeTest extends TestCase
         $a = IPv6Address::fromString('1:2:3:4:5:6:7:8');
         $b = IPv6Address::fromString('8:7:6:5:4:3:2:1');
 
-        $range = IPv6RangeAbstract::fromIPInterval($a, $b);
+        $range = IPv6Range::fromIPInterval($a, $b);
 
-        $this->assertInstanceOf(IPv6RangeAbstract::class, $range);
+        $this->assertInstanceOf(IPv6Range::class, $range);
     }
 
 
@@ -52,7 +52,7 @@ class IPv6RangeTest extends TestCase
         $minSuffix = str_repeat("\x00", 12);
         $maxSuffix = str_repeat("\xFF", 12);
         $ip = IPv6Address::fromBinary($binary . $minSuffix);
-        $range = IPv6RangeAbstract::fromIPWithCIDRPrefix($ip, $prefix);
+        $range = IPv6Range::fromIPWithCIDRPrefix($ip, $prefix);
         $this->assertEquals($minBinary . $minSuffix, $range->getMinIP()->toBinary());
         $this->assertEquals($maxBinary . $maxSuffix, $range->getMaxIP()->toBinary());
     }

@@ -1,7 +1,7 @@
 <?php
 namespace Rimelek\IPUtil;
 
-class IPv6RangeAbstract extends AbstractIPRange
+class IPv6Range extends AbstractIPRange
 {
     /**
      * 

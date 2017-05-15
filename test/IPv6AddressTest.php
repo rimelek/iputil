@@ -5,7 +5,7 @@ namespace Rimelek\IPUtil\Test;
 use Rimelek\IPUtil\IPv4Address;
 use Rimelek\IPUtil\IPv6Address;
 use PHPUnit\Framework\TestCase;
-use Rimelek\IPUtil\IPv6RangeAbstract;
+use Rimelek\IPUtil\IPv6Range;
 
 
 class IPv6AddressTest extends TestCase
@@ -180,7 +180,7 @@ class IPv6AddressTest extends TestCase
      */
     public function testToCIDRPrefixedRanges($from, $to, $expected)
     {
-        $ranges = IPv6RangeAbstract::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
+        $ranges = IPv6Range::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
 
         if (count($expected) === count($ranges)) {
             $binaryPrefix = str_repeat("\0", 12);
