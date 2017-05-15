@@ -19,4 +19,15 @@ Requirements
 ------------
 
 - PHP 5.6
-- ...
+- `Composer <https://getcomposer.org/>`_
+
+License
+-------
+
+This library is under `MIT license <https://github.com/rimelek/iputil/blob/master/LICENSE>`_
+
+DEMO
+-----
+
+If you want to see some live examples what the library can do for you, check the following page on IT sziget: https://app.it-sziget.hu/en/iputil
+
