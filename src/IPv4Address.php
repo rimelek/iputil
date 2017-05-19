@@ -136,13 +136,5 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
     {
         return parent::fromBitString($bitString);
     }
-
-    /**
-     * @inheritDoc
-     */
-    public static function CIDRPrefixToBinaryMask($CIDRPrefix)
-    {
-        return parent::CIDRPrefixToBinaryMask($CIDRPrefix);
-    }
 }
 

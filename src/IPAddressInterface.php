@@ -60,11 +60,4 @@ interface IPAddressInterface
      */
     public function equals(IPAddressInterface $ip);
 
-    /**
-     * C.I.D.R. prefix converted to binary subnet mask
-     *
-     * @param int $CIDRPrefix
-     * @return string
-     */
-    public static function CIDRPrefixToBinaryMask($CIDRPrefix);
 }

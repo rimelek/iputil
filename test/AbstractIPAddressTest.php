@@ -59,6 +59,9 @@ class AbstractIPAddressTest extends TestCase
 
     public function testCIDRPrefixToBinaryMask()
     {
+        $method4 = $this->getPrivateMethod(IPv4Address::class, 'CIDRPrefixToBinaryMask');
+        $method6 = $this->getPrivateMethod(IPv6Address::class, 'CIDRPrefixToBinaryMask');
+
         $bytes = [
             "\x00",
             "\x80",
@@ -80,10 +83,10 @@ class AbstractIPAddressTest extends TestCase
                 $expectedIPv6[$i] = $bytes[$j];
                 $prefix = $i * 8 + $j;
                 if ($i <= 3) { // IPv4
-                    $binary = IPv4Address::CIDRPrefixToBinaryMask($prefix);
+                    $binary = $method4->invoke(null, $prefix);
                     $this->assertEquals($expectedIPv4, $binary);
                 }
-                $binary = IPv6Address::CIDRPrefixToBinaryMask($prefix);
+                $binary = $method6->invoke(null, $prefix);
                 $this->assertEquals($expectedIPv6, $binary);
             }
         }
