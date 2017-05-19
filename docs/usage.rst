@@ -59,10 +59,10 @@ You can do the same with IPv6
     // from IPv6 string to bit string
     $ip6 = IPv6Address::fromBinary("::ffff:7f00:1");
     echo $ip6->toBitString();
-    // output: 0000000000000000000000000000000000000000111111111111111101111111000000000000000000000001
+    // output: 00000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111101111111000000000000000000000001
 
-    $ip6 = IPv6Address::fromBitString("0000000000000000000000000000000000000000111111111111111101111111000000000000000000000001");
-    $binary = $ip4->toBinary();
+    $ip6 = IPv6Address::fromBitString("00000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111101111111000000000000000000000001");
+    $binary = $ip6->toBinary();
     // It is not printable so do not use it to show an IP address
 
 And you can convert an IPv4 address to IPv6 or IPv6 address to IPv4
@@ -74,5 +74,62 @@ And you can convert an IPv4 address to IPv6 or IPv6 address to IPv4
     $ip6 = $ip4->toIPv6();
     $ip4 = $ip6->toIPv4();
 
+or
+
+.. code-block:: php
+
+    <?php
+    // ...
+    $ip6 = IPv6Address::fromIPv4($ip4);
+    $ip4 = IPv4Address::fromIPv6($ip6);
+
+CIDR prefix is a number that tells you how many bits are set in the IP mask from left to right followed by zeros only.
+If you need IP mask, you can create it from CIDR prefix.
+
+.. code-block:: php
+
+    <?php
+    // ...
+    $ip4Mask = IPv4Address::fromCIDRPrefix(24);
+    echo $ip4Mask->toString();
+    // output: 255.255.255.0
+
+    $ip6Mask = IPv6Address::fromCIDRPrefix(40);
+    echo $ip6Mask->toString();
+    // output: ffff:ffff:ff00::
+
+Not all IPv6 addresses are compatible with IPv4. If you do not want to get an exception when you call $ip6->toIPv4(),
+use isCompatibleWithIPv4() to check if it is compatible.
+
+.. code-block:: php
+
+    <?php
+    // ...
+    if ($ip6->isCompatibleWithIPv4()) {
+        $ip4 = $ip6->toIPv4();
+    }
+
+You can get some additional information about an IPv4 address like IP class and high order bits
+
+.. code-block:: php
+
+    <?php
+    // ...
+    $ip4 = IPv4Address::fromString('192.168.1.1');
+    echo $ip4->getIPClass();
+    // output: C
+
+The above check based on high order bits. You can get the high order bits of an IP class by calling getHighOrderBitsOfIPv4Class()
+
+
+.. code-block:: php
+
+    <?php
+    // ...
+    echo IPv4Address::getHighOrderBitsOfIPv4Class('C');
+    // output: 110
+
+IP ranges
+---------
 
 **This page is not complete yet! More examples are coming soon.**
