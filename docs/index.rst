@@ -21,11 +21,3 @@ CIDR notations to restrict access to an interface and regenerate it any time usi
    install
    testing
    usage
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
