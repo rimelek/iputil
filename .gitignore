@@ -2,3 +2,4 @@
 /vendor/
 /.idea
 /*.phar
+/docs/_*
