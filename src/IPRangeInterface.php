@@ -18,6 +18,20 @@ interface IPRangeInterface
     public function getMaxIP();
 
     /**
+     * C.I.D.R. Prefix
+     *
+     * @return int|null
+     */
+    public function getCIDRPrefix();
+
+    /**
+     * min - max
+     *
+     * @return string
+     */
+    public function toString();
+
+    /**
      * Check if $this is a part of $range
      *
      * @param IPRangeInterface $range
