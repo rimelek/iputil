@@ -191,7 +191,7 @@ You can check if a range is in an other:
 
     <?php
     if ($ip4Range->in($largerIp4Range)) {
-        echo 'largerIP4Range is in ip4Range';
+        echo 'ip4Range is in largerIp4Range';
     }
 
 When a range was created by fromIPInterval() or fromBinaryInterval(), converting it to one CIDR notation
