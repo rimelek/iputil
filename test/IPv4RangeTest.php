@@ -36,7 +36,7 @@ class IPv4RangeTest extends TestCase
         $this->assertEquals($prefix, $range->getCIDRPrefix());
     }
 
-    public function dataProviderToCIDRPrefixedRanges()
+    public function dataProviderToCIDRNotations()
     {
         return [
             ["\x7F\x00\x00\x01", "\x7F\x00\x00\x01", [
@@ -94,14 +94,14 @@ class IPv4RangeTest extends TestCase
 
     /**
      *
-     * @dataProvider dataProviderToCIDRPrefixedRanges
+     * @dataProvider dataProviderToCIDRNotations
      * @param $from
      * @param $to
      * @param array $expected
      */
-    public function testToCIDRPrefixedRanges($from, $to, $expected)
+    public function testToCIDRNotations($from, $to, $expected)
     {
-        $ranges = IPv4Range::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
+        $ranges = IPv4Range::fromBinaryInterval($from, $to)->toCIDRNotations();
 
         if (count($expected) === count($ranges)) {
             foreach ($ranges as $i => $range) {

@@ -123,7 +123,7 @@ class IPv6AddressTest extends TestCase
         $ip->toIPv4();
     }
 
-    public function dataProviderToCIDRPrefixedRanges()
+    public function dataProviderToCIDRNotations()
     {
         return [
             ["\x7F\x00\x00\x01", "\x7F\x00\x00\x01", [
@@ -173,14 +173,14 @@ class IPv6AddressTest extends TestCase
 
     /**
      *
-     * @dataProvider dataProviderToCIDRPrefixedRanges
+     * @dataProvider dataProviderToCIDRNotations
      * @param $from
      * @param $to
      * @param array $expected
      */
-    public function testToCIDRPrefixedRanges($from, $to, $expected)
+    public function testToCIDRNotations($from, $to, $expected)
     {
-        $ranges = IPv6Range::fromBinaryInterval($from, $to)->toCIDRPrefixedRanges();
+        $ranges = IPv6Range::fromBinaryInterval($from, $to)->toCIDRNotations();
 
         if (count($expected) === count($ranges)) {
             $binaryPrefix = str_repeat("\0", 12);

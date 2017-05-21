@@ -157,7 +157,7 @@ abstract class AbstractIPRange implements IPRangeInterface
     /**
      * @return static[]
      */
-    public function toCIDRPrefixedRanges()
+    public function toCIDRNotations()
     {
         /* @var $class IPAddressFactoryInterface */
         $class = get_class($this->getMinIP());

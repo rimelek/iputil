@@ -42,5 +42,5 @@ interface IPRangeInterface
     /**
      * @return static[]
      */
-    public function toCIDRPrefixedRanges();
+    public function toCIDRNotations();
 }
