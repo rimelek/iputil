@@ -2,9 +2,9 @@
 namespace Rimelek\IPUtil;
 
 
-class IPv4Range extends AbstractIPRange
+class IPv4Range extends AbstractIPRange implements IPRangeFactoryInterface
 {
-    
+
     /**
      *
      * @param string $min

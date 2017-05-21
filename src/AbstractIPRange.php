@@ -1,17 +1,17 @@
 <?php
 namespace Rimelek\IPUtil;
 
-abstract class AbstractIPRange
+abstract class AbstractIPRange implements IPRangeInterface
 {
     /**
      *
-     * @var IPAddressInterface $min
+     * @var AbstractIPAddress $min
      */
     private $min;
     
     /**
      *
-     * @var IPAddressInterface $max
+     * @var AbstractIPAddress $max
      */
     private $max;
     
@@ -40,7 +40,7 @@ abstract class AbstractIPRange
     
     /**
      * 
-     * @return IPAddressInterface
+     * @return AbstractIPAddress
      */
     public function getMinIP()
     {
@@ -49,7 +49,7 @@ abstract class AbstractIPRange
     
     /**
      * 
-     * @return IPAddressInterface
+     * @return AbstractIPAddress
      */
     public function getMaxIP()
     {
@@ -105,13 +105,13 @@ abstract class AbstractIPRange
     }
 
     /**
-     * Create an IPRange instance by the minimum and maximum IP addresses
+     * Create an IPRange instance from the minimum and maximum IP addresses
      *
      * @param AbstractIPAddress $min
      * @param AbstractIPAddress $max
      * @return static
      */
-    protected static function fromIPInterval($min, $max)
+    public static function fromIPInterval($min, $max)
     {
         return new static($min, $max);
     }
@@ -122,15 +122,15 @@ abstract class AbstractIPRange
      * @param int $CIDRPrefix
      * @return static
      */
-    protected static function fromIPWithCIDRPrefix($IP, $CIDRPrefix)
+    public static function fromIPWithCIDRPrefix($IP, $CIDRPrefix)
     {
-        $CIDRBinary = $IP->fromCIDRPrefix($CIDRPrefix)->toBinary();
+        /* @var $class IPv4Address|IPv6Address */
+        $class = get_class($IP);
+        $CIDRBinary = $class::fromCIDRPrefix($CIDRPrefix)->toBinary();
         $min = $IP->toBinary() & $CIDRBinary;
         $max = $min | (~$CIDRBinary);
-        $range = self::fromIPInterval(
-            call_user_func([get_class($IP), 'fromBinary'], $min),
-            call_user_func([get_class($IP), 'fromBinary'], $max)
-            );
+
+        $range = self::fromIPInterval($class::fromBinary($min), $class::fromBinary($max));
         $range->CIDRPrefix = $CIDRPrefix;
         return $range;
     }
@@ -138,10 +138,10 @@ abstract class AbstractIPRange
     /**
      * Check if $this is a part of $range
      * 
-     * @param self $range
+     * @param IPRangeInterface $range
      * @return bool
      */
-    public function in(self $range)
+    public function in(IPRangeInterface $range)
     {
         $thisMin = $this->getMinIP();
         $thisMax = $this->getMaxIP();
@@ -171,11 +171,15 @@ abstract class AbstractIPRange
      */
     public function toCIDRPrefixedRanges()
     {
-        $sizeInBits = static::class === IPv6Range::class ? 128 : 32;
-        $sizeInBytes = static::class === IPv6Range::class ? 16 : 4;
+        /* @var $class IPAddressFactoryInterface */
+        $class = get_class($this->getMinIP());
+        $minIPBinary = $this->getMinIP()->toBinary();
+        $maxIPBinary = $this->getMaxIP()->toBinary();
+        $minIPLength = strlen($minIPBinary);
+        $sizeInBits = $minIPLength * 8;
+
         // In case of full range
-        if ($this->getMinIP()->toBinary() === str_repeat("\0", $sizeInBytes)
-            and $this->getMaxIP()->toBinary() === str_repeat("\xFF", $sizeInBytes)) {
+        if (trim($minIPBinary, "\0") === "" and trim($maxIPBinary, "\xFF") === "") {
             return [self::fromIPWithCIDRPrefix($this->getMinIP(), 0)];
         }
         // If minimum and maximum are the same, then there is only one IP address
@@ -200,19 +204,19 @@ abstract class AbstractIPRange
 
             if (rtrim(substr($minBS, $countFixBits), '0') === "" and
                 rtrim(substr($maxBS, $countFixBits), '1') === "") {
-                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($minBS), $countFixBits);
+                $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString($minBS), $countFixBits);
             } else {
                 // 1.
                 $pos = strrpos($minBS, '1', $countFixBits);
                 if ($pos !== false) {
                     $CIDRPrefix = $pos+1;
-                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($minBS), $CIDRPrefix);
+                    $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString($minBS), $CIDRPrefix);
                     $minBS = rtrim(rtrim($minBS, '0'), '1');
                     // 2.
                     $pos = strlen($minBS)-1;
                     while ($pos > $countFixBits) {
                         $minBS{$pos} = '1';
-                        $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(str_pad($minBS, $sizeInBits, '0', STR_PAD_RIGHT)), $pos+1);
+                        $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString(str_pad($minBS, $sizeInBits, '0', STR_PAD_RIGHT)), $pos+1);
                         $minBS = rtrim($minBS, '1');
                         $pos = strlen($minBS)-1;
                     }
@@ -221,11 +225,11 @@ abstract class AbstractIPRange
                 $end = max((strrpos($maxBS, '0') ?: -1)+1, $countFixBits);
                 $pos = $countFixBits;
                 while (($pos = strpos($maxBS, '1', $pos+1)) !== false and $pos < $end) {
-                    $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString(substr_replace($maxBS, '0', $pos, 1)), $pos+1);
+                    $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString(substr_replace($maxBS, '0', $pos, 1)), $pos+1);
                 }
                 
                 // 5.
-                $ranges[] = self::fromIPWithCIDRPrefix($this->getMinIP()->fromBitString($maxBS), $end);
+                $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString($maxBS), $end);
             }                      
         }
         if ($firstAndLastRange['lastRange'] !== null) {

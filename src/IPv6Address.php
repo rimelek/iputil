@@ -5,7 +5,7 @@ use Exception;
 /**
  * IPv6
  */
-class IPv6Address extends AbstractIPAddress implements IPAddressInterface
+class IPv6Address extends AbstractIPAddress implements IPAddressFactoryInterface
 {
     /**
      * Medium length. When a block contains only zeros, only one zero is displayed
@@ -63,7 +63,7 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromCIDRPrefix($CIDRPrefix)
     {
-        return parent::fromCIDRPrefix($CIDRPrefix);
+        return self::fromBinary(self::CIDRPrefixToBinaryMask($CIDRPrefix, 128));
     }
     
     /**
@@ -143,7 +143,7 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromBinary($binary)
     {
-        return parent::fromBinary($binary);
+        return new static($binary, 16);
     }
 
     /**
@@ -151,6 +151,6 @@ class IPv6Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromBitString($bitString)
     {
-        return parent::fromBitString($bitString);
+        return self::fromBinary(parent::bitStringToBinary($bitString));
     }
 }

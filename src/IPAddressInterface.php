@@ -27,31 +27,7 @@ interface IPAddressInterface
     public function toBitString();
 
     /**
-     * Create an IP address from 0-1 series
-     *
-     * @param string $bitString
-     * @return IPAddressInterface
-     */
-    public static function fromBitString($bitString);
-
-    /**
-     * Create an IP address from binary data
-     *
-     * @param string $binary
-     * @return IPAddressInterface
-     */
-    public static function fromBinary($binary);
-
-    /**
-     * Create IPv4Address instance from C.I.D.R. prefix
-     *
-     * @param int $CIDRPrefix CIDRPrefix
-     * @return self
-     */
-    public static function fromCIDRPrefix($CIDRPrefix);
-
-    /**
-     * Check if to IP are equal.
+     * Check if two IP are equal.
      *
      * $this is equal to $ip if their binary representations are the same.
      *

@@ -1,7 +1,7 @@
 <?php
 namespace Rimelek\IPUtil;
 
-abstract class AbstractIPAddress
+abstract class AbstractIPAddress implements IPAddressInterface
 {
     /**
      * The binary representation of the IP address
@@ -12,11 +12,11 @@ abstract class AbstractIPAddress
     
     /**
      * @param string $binary Binary representation of the IP address. The binary form of 127.0.0.1 is "\x7F\x00\x00\x01"
+     * @param int $sizeInBytes
      */
-    private function __construct($binary)
+    protected function __construct($binary, $sizeInBytes)
     {
-        $size = static::class === IPv6Address::class ? 16 : 4;
-        $binary = str_pad(substr($binary, -$size), $size, "\0", STR_PAD_LEFT);
+        $binary = str_pad(substr($binary, -$sizeInBytes), $sizeInBytes, "\0", STR_PAD_LEFT);
         $this->binary = $binary;
     }
 
@@ -96,46 +96,27 @@ abstract class AbstractIPAddress
         
         return $digits;
     }
-    
+
     /**
-     * Create an IP address from 0-1 series
-     * 
+     * Convert bit string to a binary string
+     *
      * @param string $bitString
-     * @return static
+     * @return string
      */
-    protected static function fromBitString($bitString)
+    protected static function bitStringToBinary($bitString)
     {
-        $sizeInBits = static::class === IPv6Address::class ? 128 : 32;
-        $bitString = substr(str_pad(preg_replace('~[^1]~', '0', $bitString),
-            $sizeInBits, '0', STR_PAD_LEFT), 0, $sizeInBits);
+
+        $bitString = preg_replace('~[^1]~', '0', $bitString);
+        $length = strlen($bitString);
+        $remainder = $length % 8;
+        $sizeInBits = $remainder ? $length + (8 - $remainder) : $length;
+        $bitString = str_pad($bitString, $sizeInBits, '0', STR_PAD_LEFT);
 
         $binary = "";
         foreach (str_split($bitString, 8) as $byteBits) {
             $binary .= self::bitStringToChar($byteBits);
         }
-        return self::fromBinary($binary);
-    }
-    
-    /**
-     * Create an IP address from binary data
-     * 
-     * @param string $binary
-     * @return static
-     */
-    protected static function fromBinary($binary)
-    {
-        return new static($binary);
-    }
-
-    /**
-     * Create IPAddress instance from C.I.D.R. prefix
-     *
-     * @param int $CIDRPrefix CIDRPrefix
-     * @return static
-     */
-    protected static function fromCIDRPrefix($CIDRPrefix)
-    {
-        return self::fromBinary(self::CIDRPrefixToBinaryMask($CIDRPrefix));
+        return $binary;
     }
     
     /**
@@ -148,7 +129,8 @@ abstract class AbstractIPAddress
      */
     public function toInverseIP()
     {
-       return new static(~$this->toBinary());
+        $inverseBinary = ~$this->toBinary();
+        return new static($inverseBinary, strlen($inverseBinary));
     }   
     
     /**
@@ -174,13 +156,11 @@ abstract class AbstractIPAddress
      * C.I.D.R. prefix converted to binary subnet mask
      *
      * @param int $CIDRPrefix
+     * @param int $sizeInBits
      * @return string
      */
-    protected static function CIDRPrefixToBinaryMask($CIDRPrefix)
+    protected static function CIDRPrefixToBinaryMask($CIDRPrefix, $sizeInBits)
     {
-
-        $sizeInBits = static::class === IPv6Address::class ? 128 : 32;
-        
         $CIDRPrefix = min($CIDRPrefix, $sizeInBits);
         $_1 = intval($CIDRPrefix / 8);
         $_2 = $CIDRPrefix % 8;

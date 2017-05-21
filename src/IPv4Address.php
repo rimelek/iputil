@@ -5,7 +5,7 @@ use Exception;
 /**
  * IPv4
  */
-class IPv4Address extends AbstractIPAddress implements IPAddressInterface
+class IPv4Address extends AbstractIPAddress implements IPAddressFactoryInterface
 {
     /**
      * First octet high order bits of IP classes
@@ -45,7 +45,7 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromCIDRPrefix($CIDRPrefix)
     {
-        return parent::fromCIDRPrefix($CIDRPrefix);
+        return self::fromBinary(self::CIDRPrefixToBinaryMask($CIDRPrefix, 32));
     }
     
     /**
@@ -126,7 +126,7 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromBinary($binary)
     {
-        return parent::fromBinary($binary);
+        return new static($binary, 4);
     }
 
     /**
@@ -134,7 +134,7 @@ class IPv4Address extends AbstractIPAddress implements IPAddressInterface
      */
     public static function fromBitString($bitString)
     {
-        return parent::fromBitString($bitString);
+        return self::fromBinary(parent::bitStringToBinary($bitString));
     }
 }
 
