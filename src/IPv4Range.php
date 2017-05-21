@@ -20,11 +20,11 @@ class IPv4Range extends AbstractIPRange implements IPRangeFactoryInterface
      * 
      * @param IPv4Address $min
      * @param IPv4Address $max
-     * @return IPv4Range|AbstractIPRange
+     * @return IPv4Range
      */
     public static function fromIPInterval($min, $max)
     {
-        return parent::fromIPInterval($min, $max);
+        return new static($min, $max);
     }
     
     /**

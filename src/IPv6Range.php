@@ -18,11 +18,11 @@ class IPv6Range extends AbstractIPRange implements IPRangeFactoryInterface
      * 
      * @param IPv6Address $min
      * @param IPv6Address $max
-     * @return IPv6Range|AbstractIPRange
+     * @return IPv6Range
      */
     public static function fromIPInterval($min, $max)
     {
-        return parent::fromIPInterval($min, $max);
+        return new static($min, $max);
     }
     
     /**

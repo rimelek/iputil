@@ -105,18 +105,6 @@ abstract class AbstractIPRange implements IPRangeInterface
     }
 
     /**
-     * Create an IPRange instance from the minimum and maximum IP addresses
-     *
-     * @param AbstractIPAddress $min
-     * @param AbstractIPAddress $max
-     * @return static
-     */
-    public static function fromIPInterval($min, $max)
-    {
-        return new static($min, $max);
-    }
-
-    /**
      *
      * @param IPAddressInterface $IP
      * @param int $CIDRPrefix
@@ -130,7 +118,7 @@ abstract class AbstractIPRange implements IPRangeInterface
         $min = $IP->toBinary() & $CIDRBinary;
         $max = $min | (~$CIDRBinary);
 
-        $range = self::fromIPInterval($class::fromBinary($min), $class::fromBinary($max));
+        $range = new static($class::fromBinary($min), $class::fromBinary($max));
         $range->CIDRPrefix = $CIDRPrefix;
         return $range;
     }
