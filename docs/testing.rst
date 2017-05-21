@@ -8,8 +8,7 @@ run unit test if you wish. It is mainly useful when you fork the library and wan
 
 You will need
 
-- `PHPUnit 6.1 <https://phpunit.de/>`_. Download it as phar file and save it into
-the project root.
+- `PHPUnit 6.1 <https://phpunit.de/>`_. Download it as phar file and save it into the project root.
 - PHP CLI >= 5.6
 
 Then run the following command to test in terminal:
