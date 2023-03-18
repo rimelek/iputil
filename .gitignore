@@ -4,3 +4,6 @@
 /*.phar
 /docs/_*
 /.phpunit.result.cache
+/php/phpunit/phpunit.php-*.xml
+/php/phpunit/.phpunit.result.cache
+/php/phpunit/.phpunit.result.php-*.cache
