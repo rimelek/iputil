@@ -32,11 +32,11 @@ if (( "$#" > 1 )); then
     fi
 fi
 
-IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME")
+IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME" || true)
 
 if (( "$IMAGE_COUNT" == 0 )); then
     docker build --no-cache -t "$IMAGE_NAME" "$CURR_DIR"
-    IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME")
+    IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME" || true)
     if (( "$IMAGE_COUNT" == 0 )); then
         >&2 echo "The image cannot be built: $IMAGE_NAME";
         exit 1
