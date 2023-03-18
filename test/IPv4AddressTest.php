@@ -70,11 +70,9 @@ class IPv4AddressTest extends TestCase
         $this->assertEquals('1111', IPv4Address::getHighOrderBitsOfIPv4Class('E'));
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testGetHighOrderBitsOfIPv4ClassException()
     {
+        $this->expectException(\Exception::class);
         IPv4Address::getHighOrderBitsOfIPv4Class('F');
     }
 

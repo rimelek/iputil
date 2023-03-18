@@ -114,11 +114,9 @@ class IPv6AddressTest extends TestCase
         $this->assertEquals("\x7f\x00\x00\x01", $ip->toIPv4()->toBinary());
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testToIPv4Exception()
     {
+        $this->expectException(\Exception::class);
         $ip = IPv6Address::fromBinary("\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x7f\x00\x00\x01");
         $ip->toIPv4();
     }
