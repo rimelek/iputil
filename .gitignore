@@ -1,9 +1,21 @@
+# IDE settings
+
+## NetBeans
 /nbproject/
+
+## PHPStorm (JetBrains)
+/.idea/workspace.xml
+/.idea/.usage.statistics.xml
+/.idea/shelf
+/.idea/*.iml
+
+# PHP Unit related files
 /vendor/
-/.idea
 /*.phar
-/docs/_*
 /.phpunit.result.cache
 /php/phpunit/phpunit.php-*.xml
 /php/phpunit/.phpunit.result.cache
 /php/phpunit/.phpunit.result.php-*.cache
+
+# Sphinx files
+/docs/_*
