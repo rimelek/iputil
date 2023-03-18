@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 IMAGE_NAME=rimelek-iputil-test
 
@@ -8,7 +8,14 @@ cd ${CURR_DIR}
 
 ARGS=$@
 
-MOUNT_PATHS="-v ${PWD}:${PWD} -v /tmp:/tmp "
+declare -A tmp_alternatives=(
+  [Darwin]="/private/var/folders/dd"
+  [Linux]="/tmp"
+)
+
+tmp_path="${tmp_alternatives[$(uname)]}"
+
+MOUNT_PATHS="-v ${PWD}:${PWD} -v $tmp_path:$tmp_path"
 
 if [ "$#" -gt 1 ]; then
     COVERAGE_CLOVER_ARG=$(echo ${ARGS} | grep -E -o '\-\-coverage-clover ([^ ]+)');
