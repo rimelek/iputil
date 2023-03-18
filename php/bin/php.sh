@@ -69,6 +69,7 @@ IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME" || true)
 
 if (( "$IMAGE_COUNT" == 0 )); then
     docker build "$CURR_DIR" \
+      --file "$PROJECT_ROOT/Dockerfile" \
       --build-arg "PHP_VERSION=$PHP_VERSION" \
       --build-arg "XDEBUG_VERSION=$XDEBUG_VERSION" \
       --no-cache \
