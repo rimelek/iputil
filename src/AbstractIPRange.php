@@ -203,7 +203,7 @@ abstract class AbstractIPRange implements IPRangeInterface
                     // 2.
                     $pos = strlen($minBS)-1;
                     while ($pos > $countFixBits) {
-                        $minBS{$pos} = '1';
+                        $minBS[$pos] = '1';
                         $ranges[] = self::fromIPWithCIDRPrefix($class::fromBitString(str_pad($minBS, $sizeInBits, '0', STR_PAD_RIGHT)), $pos+1);
                         $minBS = rtrim($minBS, '1');
                         $pos = strlen($minBS)-1;
