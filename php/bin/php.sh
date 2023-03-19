@@ -27,7 +27,6 @@ declare -A PHP_XDEBUG_VERSIONS=(
 
 XDEBUG_VERSION="${PHP_XDEBUG_VERSIONS[$PHP_VERSION]}"
 PROJECT_ROOT="$(cd "$CURR_DIR/../.." && pwd)"
-VENDOR_DIR="$PROJECT_ROOT/vendor"
 PHP_UNIT_PATH="$PROJECT_ROOT/php/bin/phpunit.php"
 PHP_UNIT_XML="$PROJECT_ROOT/php/phpunit/phpunit.xml"
 PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
@@ -40,7 +39,6 @@ if [[ "${ARGS[0]}" == "$PHP_UNIT_PATH" ]] \
 && [[ "${ARGS[2]}" == "$PHP_UNIT_XML" ]]; then
   mkdir -p "$PHP_UNIT_XML_CACHE_DIR"
   export PHP_UNIT_TESTSUITE_NAME="test $PHP_VERSION"
-  export PHP_UNIT_BOOTSTRAP_PATH="$VENDOR_DIR/autoload.php"
   envsubst < "$PHP_UNIT_XML" > "$PHP_UNIT_XML_CACHE"
   ARGS[2]="$PHP_UNIT_XML_CACHE"
   if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
