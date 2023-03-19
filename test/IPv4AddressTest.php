@@ -75,7 +75,7 @@ class IPv4AddressTest extends TestCase
      */
     public function testGetHighOrderBitsOfIPv4ClassException()
     {
-        if (method_exists($this, 'exceptException')) {
+        if (method_exists($this, 'expectException')) {
             $this->expectException(\Exception::class);
         }
         IPv4Address::getHighOrderBitsOfIPv4Class('F');

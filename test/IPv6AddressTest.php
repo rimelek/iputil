@@ -119,7 +119,7 @@ class IPv6AddressTest extends TestCase
      */
     public function testToIPv4Exception()
     {
-        if (method_exists($this, 'exceptException')) {
+        if (method_exists($this, 'expectException')) {
             $this->expectException(\Exception::class);
         }
         $ip = IPv6Address::fromBinary("\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xff\x7f\x00\x00\x01");
