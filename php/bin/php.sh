@@ -28,7 +28,6 @@ declare -A PHP_XDEBUG_VERSIONS=(
 XDEBUG_VERSION="${PHP_XDEBUG_VERSIONS[$PHP_VERSION]}"
 PROJECT_ROOT="$(cd "$CURR_DIR/../.." && pwd)"
 PHP_UNIT_PATH="$PROJECT_ROOT/php/bin/phpunit.php"
-PHP_UNIT_XML="$PROJECT_ROOT/php/phpunit/phpunit.xml"
 PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
 
 ARGS=("$@")
@@ -75,7 +74,7 @@ function arg_exists() {
 }
 
 if arg_exists "$PHP_UNIT_PATH" \
-&& arg_value_is "--configuration" "$PHP_UNIT_XML"; then
+&& arg_exists "--configuration"; then
   mkdir -p "$PHP_UNIT_XML_CACHE_DIR"
   if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
     arg_value_set "--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache"
