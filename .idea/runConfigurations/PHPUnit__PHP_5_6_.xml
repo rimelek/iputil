@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="PHPUnit (PHP 8.0)" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+  <configuration default="false" name="PHPUnit (PHP 5.6)" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
     <CommandLine>
       <PhpTestInterpreterSettings>
-        <option name="interpreterName" value="php.sh 8.0" />
+        <option name="interpreterName" value="php.sh 5.6" />
       </PhpTestInterpreterSettings>
     </CommandLine>
     <TestRunner configuration_file="$PROJECT_DIR$/php/phpunit/phpunit-9.6.xml" scope="XML" />
