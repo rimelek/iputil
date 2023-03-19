@@ -16,6 +16,7 @@
 /php/phpunit/phpunit.php-*.xml
 /php/phpunit/.phpunit.result.cache
 /php/phpunit/.phpunit.result.php-*.cache
+/php/phpunit/phpunit-*.phar
 
 # Sphinx files
 /docs/_*

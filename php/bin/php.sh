@@ -14,6 +14,9 @@ shift
 IMAGE_NAME="$IMAGE_NAME_PREFIX-php-$PHP_VERSION"
 
 declare -A PHP_XDEBUG_VERSIONS=(
+  [5.6]='2.5.5'
+  [7.0]="2.7.2"
+  [7.1]="2.9.8"
   [7.2]="3.1.6"
   [7.3]="3.1.6"
   [7.4]="3.1.6"
@@ -25,7 +28,7 @@ declare -A PHP_XDEBUG_VERSIONS=(
 XDEBUG_VERSION="${PHP_XDEBUG_VERSIONS[$PHP_VERSION]}"
 PROJECT_ROOT="$(cd "$CURR_DIR/../.." && pwd)"
 VENDOR_DIR="$PROJECT_ROOT/vendor"
-PHP_UNIT_PATH="$VENDOR_DIR/phpunit/phpunit/phpunit"
+PHP_UNIT_PATH="$PROJECT_ROOT/php/bin/phpunit.php"
 PHP_UNIT_XML="$PROJECT_ROOT/php/phpunit/phpunit.xml"
 PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
 PHP_UNIT_XML_CACHE="$PHP_UNIT_XML_CACHE_DIR/phpunit.php-$PHP_VERSION.xml"
@@ -40,7 +43,9 @@ if [[ "${ARGS[0]}" == "$PHP_UNIT_PATH" ]] \
   export PHP_UNIT_BOOTSTRAP_PATH="$VENDOR_DIR/autoload.php"
   envsubst < "$PHP_UNIT_XML" > "$PHP_UNIT_XML_CACHE"
   ARGS[2]="$PHP_UNIT_XML_CACHE"
-  ARGS+=("--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache")
+  if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
+    ARGS+=("--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache")
+  fi 
 fi
 
 declare -A tmp_alternatives=(
@@ -83,7 +88,7 @@ if (( "$IMAGE_COUNT" == 0 )); then
 fi
 
 if (( "$IMAGE_COUNT" > 1 )); then
-    >&2 echo "There more image name containing the string: $IMAGE_NAME";
+    >&2 echo "There are multiple image names containing the string: $IMAGE_NAME";
     exit 1
 fi
 
