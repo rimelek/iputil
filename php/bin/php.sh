@@ -34,15 +34,55 @@ PHP_UNIT_XML_CACHE="$PHP_UNIT_XML_CACHE_DIR/phpunit.php-$PHP_VERSION.xml"
 
 ARGS=("$@")
 
-if [[ "${ARGS[0]}" == "$PHP_UNIT_PATH" ]] \
-&& [[ "${ARGS[1]}" == "--configuration" ]] \
-&& [[ "${ARGS[2]}" == "$PHP_UNIT_XML" ]]; then
+function arg_value_of() {
+  local i
+  local arg="$1"
+
+  for i in "${!ARGS[@]}"; do
+    if [[ "${ARGS[$i]}" == "$arg" ]]; then
+      if (( "${#ARGS[@]}" > (i + 1) )); then
+        echo "${ARGS[(( i + 1 ))]}"
+        return 0 # The argument key and value exists
+      fi
+      return 1 # The argument value does not exist
+    fi
+  done
+  return 2 # the argument key does not exist
+}
+
+function arg_value_is() {
+  [[ "$(arg_value_of "$1")" == "$2" ]]
+}
+
+function arg_value_set() {
+  local i
+  local arg_key="$1"
+  local arg_value="$2"
+
+  for i in "${!ARGS[@]}"; do
+    if [[ "${ARGS[$i]}" == "$arg_key" ]]; then
+      ARGS[(( i + 1 ))]="$arg_value"
+      return 0
+    fi
+  done
+  ARGS+=("$arg_key" "$arg_value")
+}
+
+function arg_exists() {
+  local ret=0
+  arg_value_of "$1" >/dev/null || ret=$?
+  
+  (( ret < 2))
+}
+
+if arg_exists "$PHP_UNIT_PATH" \
+&& arg_value_is "--configuration" "$PHP_UNIT_XML"; then
   mkdir -p "$PHP_UNIT_XML_CACHE_DIR"
   export PHP_UNIT_TESTSUITE_NAME="test $PHP_VERSION"
   envsubst < "$PHP_UNIT_XML" > "$PHP_UNIT_XML_CACHE"
-  ARGS[2]="$PHP_UNIT_XML_CACHE"
+  arg_value_set "--configuration" "$PHP_UNIT_XML_CACHE"
   if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
-    ARGS+=("--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache")
+    arg_value_set "--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache"
   fi 
 fi
 
