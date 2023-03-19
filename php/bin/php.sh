@@ -30,7 +30,6 @@ PROJECT_ROOT="$(cd "$CURR_DIR/../.." && pwd)"
 PHP_UNIT_PATH="$PROJECT_ROOT/php/bin/phpunit.php"
 PHP_UNIT_XML="$PROJECT_ROOT/php/phpunit/phpunit.xml"
 PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
-PHP_UNIT_XML_CACHE="$PHP_UNIT_XML_CACHE_DIR/phpunit.php-$PHP_VERSION.xml"
 
 ARGS=("$@")
 
@@ -78,9 +77,6 @@ function arg_exists() {
 if arg_exists "$PHP_UNIT_PATH" \
 && arg_value_is "--configuration" "$PHP_UNIT_XML"; then
   mkdir -p "$PHP_UNIT_XML_CACHE_DIR"
-  export PHP_UNIT_TESTSUITE_NAME="test $PHP_VERSION"
-  envsubst < "$PHP_UNIT_XML" > "$PHP_UNIT_XML_CACHE"
-  arg_value_set "--configuration" "$PHP_UNIT_XML_CACHE"
   if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
     arg_value_set "--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache"
   fi 

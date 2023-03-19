@@ -22,6 +22,16 @@ $projectRoot = realpath($currDir . '/../..');
 $phpUnitCacheDir = $projectRoot . '/php/phpunit';
 $phpUnitPharPath = $phpUnitCacheDir . '/phpunit-' . $phpUnitVersion . '.phar';
 $phpUnitPharURL = 'https://phar.phpunit.de/phpunit-' . $phpUnitVersion . '.phar';
+$phpUnitXML = $projectRoot . '/php/phpunit/phpunit-' . $phpUnitVersion . '.xml';
+$phpUnitXMLCache = $phpUnitCacheDir . '/phpunit.php-' . $phpVersion . '.xml';
+
+file_put_contents($phpUnitXMLCache,
+    preg_replace(
+        '/\$\{PHP_UNIT_TESTSUITE_NAME}/',
+        'test ' . $phpVersion,
+        file_get_contents($phpUnitXML)
+    )
+);
 
 if (!file_exists($phpUnitPharPath)) {
     file_put_contents($phpUnitPharPath, file_get_contents($phpUnitPharURL));
@@ -30,7 +40,12 @@ if (!file_exists($phpUnitPharPath)) {
 array_shift($argv);
 
 $cmd = ['php', escapeshellcmd($phpUnitPharPath)];
-foreach ($argv as $v) {
+foreach ($argv as $k => $v) {
+    if ($k > 0 and $argv[$k - 1] == '--configuration') {
+        $cmd[] = $phpUnitXMLCache;
+        continue;
+    }
+    
     // PHPStorm fix for PHP 5.6
     if ($phpVersion == '5.6' and $v == '--teamcity') {
         continue;
