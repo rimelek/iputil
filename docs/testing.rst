@@ -1,21 +1,66 @@
 .. _testing:
 
+============
 Unit testing
 ============
+
+Intro
+=====
 
 This library is fully unit-tested and does not have any special dependency, however, you can
 run unit test if you wish. It is mainly useful when you fork the library and want to improve something.
 
-You will need
+The source code contains everything you need to run the tests, but it is optimized for using it in PHPStorm
+with Docker. Using the custom Docker-based PHP interpreter and PHPUnit script you can test the source code
+with multiple PHP versions and compatible PHPUnit versions.
 
-- `PHPUnit 6.1 <https://phpunit.de/>`_. Download it as phar file and save it into the project root.
-- PHP CLI >= 5.6
+These scripts are based on the following information:
+
+- `Supported PHP versions by PHPUnit <https://phpunit.de/supported-versions.html>`_
+- `Supported PHP versions by XDebug <https://xdebug.org/docs/compat>`_
+
+PHP 5.6 is the oldest PHP version supported by the Library, but only because the project started in 2017
+without releasing a stable version so I kept the compatibility in the first stable release and I will drop it
+in the next release.
+
+Requirements
+============
+
+Installing Docker is required if you want to use the custom PHP interpreters which are based on Docker containers.
+You can follow the `official documentation <https://docs.docker.com/engine/install/>`_ to install Docker.
+If you would like to read a short explanation about the variant of Docker check out the
+`Install Docker <https://learn-docker.it-sziget.hu/en/latest/pages/intro/getting-started.html#install-docker>`_
+in my "Learn Docker" tutorial.
+
+Custom PHP interpreters
+=======================
+
+- **./php/bin/php.sh**: Wrapper script to run a container for any supported PHP version.
+  It also contains some logic for running PHPUnit with customized configuration files and parameters.
+  The first parameter of the script is the major and minor part of the PHP version and the rest of the parameters
+  are the parameters of the PHP interpreter.
+
+  .. code-block:: bash
+
+    ./php/bin/php.sh 8.2 --version
+
+- **./php/bin/php-`<PHP_VERSION>.sh`**: Wrapper scripts for :code:`php.sh` configured in PHPStorm as PHP interpreters.
+- **./php/bin/php-all.sh**: A special interpreter which runs the command with each custom PHP interpreter.
+  Using this script you can see the test result for each PHP version where the test suite name contains
+  the version number.
+- **./php/bin/phpunit.php**: This PHP script runs inside the container of the PHP interpreter and changes some of the
+  parameters which was not handled in :code:`php.sh`. It is responsible for downloading a compatible version
+  of PHPUnit as a PHP Archive (phar).
+
 
 Then run the following command to test in terminal:
 
-.. code-block:: none
+.. code-block:: bash
 
-    php phpunit.phar --configuration phpunit.xml
+    ./php/bin/php-8.2.sh $PWD/php/bin/phpunit.php --configuration phpunit.xml
+
+It actually doesn't matter what you pass as configuration file. It is just a placeholder so :code:`phpunit.php`
+can replace it with the required and compatible configuration file.
 
 At the end, you should see "100%" which means everything works well. If you are not sure every
 line is tested, use code coverage. In this case xdebug extension must be installed.
