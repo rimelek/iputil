@@ -92,4 +92,10 @@ if (( "$IMAGE_COUNT" > 1 )); then
     exit 1
 fi
 
-docker run --rm "${MOUNT_PATHS[@]}" -u "$(id -u):$(id -g)" -w "$PWD" "$IMAGE_NAME" php "${ARGS[@]}"
+# XDEBUG_MODE is required for PHP 7.2 and above
+docker run --rm "${MOUNT_PATHS[@]}" \
+  -u "$(id -u):$(id -g)" \
+  -w "$PWD" \
+  -e XDEBUG_MODE=coverage \
+  "$IMAGE_NAME" \
+  php "${ARGS[@]}"
