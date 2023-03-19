@@ -20,3 +20,4 @@
 
 # Sphinx files
 /docs/_*
+/docs/.env
