@@ -44,11 +44,11 @@ Custom PHP interpreters
 
     ./php/bin/php.sh 8.2 --version
 
-- **./php/bin/php-`<PHP_VERSION>.sh`**: Wrapper scripts for :code:`php.sh` configured in PHPStorm as PHP interpreters.
-- **./php/bin/php-all.sh**: A special interpreter which runs the command with each custom PHP interpreter.
+- :code:`./php/bin/php-<PHP_VERSION>.sh`: Wrapper scripts for :code:`php.sh` configured in PHPStorm as PHP interpreters.
+- :code:`./php/bin/php-all.sh`: A special interpreter which runs the command with each custom PHP interpreter.
   Using this script you can see the test result for each PHP version where the test suite name contains
   the version number.
-- **./php/bin/phpunit.php**: This PHP script runs inside the container of the PHP interpreter and changes some of the
+- :code:`./php/bin/phpunit.php`: This PHP script runs inside the container of the PHP interpreter and changes some of the
   parameters which was not handled in :code:`php.sh`. It is responsible for downloading a compatible version
   of PHPUnit as a PHP Archive (phar).
 
@@ -57,41 +57,41 @@ Then run the following command to test in terminal:
 
 .. code-block:: bash
 
-    ./php/bin/php-8.2.sh $PWD/php/bin/phpunit.php --configuration phpunit.xml
+    ./php/bin/php-8.2.sh "$PWD/php/bin/phpunit.php" --configuration phpunit.xml
 
 It actually doesn't matter what you pass as configuration file. It is just a placeholder so :code:`phpunit.php`
-can replace it with the required and compatible configuration file.
+can replace it with the required and compatible configuration file. :code:`phpunit.php` however must be written as
+is, because the interpreter will compare it with an expected value to add PHPUnit-related arguments.
 
-At the end, you should see "100%" which means everything works well. If you are not sure every
-line is tested, use code coverage. In this case xdebug extension must be installed.
+At the end, every line should be tested. If you are not sure if it happened, use code coverage.
 
-.. code-block:: none
+.. code-block:: bash
 
-    php -dxdebug.coverage_enable=1 phpunit.phar --coverage-clover phpunit.coverage --configuration phpunit.xml
+  ./php/bin/php-8.2.sh "$PWD/php/bin/phpunit.php" --configuration phpunit.xml --coverage-clover "$PWD/phpunit.clover"
 
-phpunit.coverage will contain the result of code coverage and IDEs can read it. The project contains
-a custom, prepared PHP interpreter based on `Docker <https://www.docker.com/>`_. So you need to install
-Docker at fist, then run a simple command to download the image and create the container. Any command is perfect
-for this like:
+.. note::
 
-.. code-block:: none
+  Starting the path of the coverage file with :code:`$PWD` or :code:`$(pwd)` is important,
+  since it will be recognized by the custom php interpreters and mounted into the containers so as a
+  bind mount, the source path must be absolute.
 
-    chmod +x php.sh
-    ./php.sh -v
+If you want to run coverage test using PHP 5.6, you need to add an extra parameter to enable code coverage.
 
-Downloading the image and installing the necessary extensions can be slow. I will upload this image to the
-Docker Hub, I promise! Until then, you need to be patient. When the previous command shows you the version of the
-PHP, it is ready to test the library.
+.. code-block:: bash
 
-.. code-block:: none
+    ./php/bin/php-5.6.sh -dxdebug.coverage_enable=1 "$PWD/php/bin/phpunit.php" --configuration phpunit.xml --coverage-clover "$PWD/phpunit.coverage.xml"
 
-    ./php.sh -dxdebug.coverage_enable=1 phpunit.phar --coverage-clover $PWD/phpunit.coverage --configuration phpunit.xml
+You can also use the PHPStorm GUI to run these tests, although PHP 5.6 unit test is not compatible with the latest
+PHPStorm. You can see the result in the terminal of the unit test, but code coverage works with PHP 5.6 as well.
 
-$PWD is needed before phpunit.coverage, because Docker will mount its folder into the container and to do it,
-it needs absolute path.
+Downloading the base image and installing the necessary extensions can be slow. It can be a good idea to run a simple php
+command before the actual test just for downloading the base images and building the local image:
 
-This custom interpreter was created to use with PHPStorm. PHPStorm supports to choose Docker container as
-interpreter, but in this case, Code Coverage does not work with phpunit.phar and needs to be installed via composer.
-I did not want to install it via composer, so I am the reason why everyone have to suffer :)
+.. code-block:: bash
 
-Of course, in your project, you are free to use composer.
+  ./php/bin/php-all.sh --version
+
+This custom interpreters was created to use with PHPStorm. PHPStorm supports to choose Docker container as
+interpreter, but in that case, you could would need much more manual configurations.
+These custom interpreters can be set as local interpreters and will give the same output as any PHP interpreter would
+do.
