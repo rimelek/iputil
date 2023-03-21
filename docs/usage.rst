@@ -160,82 +160,100 @@ The above check based on high order bits. You can get the high order bits of an 
 IP ranges
 ---------
 
-You can create an IP range instance three way. Directly giving minimum and maximum IP address instances or
+You can create an IP range instance three ways. Directly giving minimum and maximum IP address instances or
 binary strings or using one IP address instance and a CIDR prefix.
 
 .. code-block:: php
 
     <?php
     // ...
+    use Rimelek\IPUtil\IPv4Range;
+    // ...
     $ip4min = IPv4Address::fromString('192.168.1.0');
     $ip4max = IPv4Address::fromString('192.168.1.255');
 
     $ip4Range = IPv4Range::fromIPInterval($ip4min, $ip4max);
-    // or
-    $ip4range = IPv4Address::fromBinaryInterval("\xC0\xA8\x01\x00", "\xC0\xA8\x01\xFF");
-    // or
-    $ip4Range = IPv4Range::fromIPWithCIDRPrefix($ip4min, 24);
+    echo $ip4Range->toString() . "\n";
+    // output: 192.168.1.0 - 192.168.1.255
 
-Third way you do not even need to pass the minimum address.
+    $ip4range = IPv4Range::fromBinaryInterval("\xC0\xA8\x01\x00", "\xC0\xA8\x01\xFF");
+    echo $ip4Range->toString() . "\n";
+    // output: 192.168.1.0 - 192.168.1.255
+
+    $ip4Range = IPv4Range::fromIPWithCIDRPrefix($ip4min, 24);
+    echo $ip4Range->toString() . "\n";
+    // output: 192.168.1.0 - 192.168.1.255
+
+Using the CIDR notation you do not even need to pass the minimum address.
 An address between minimum and maximum is appropriate.
+
+.. code-block:: php
 
     <?php
     // ...
     $ip4min = IPv4Address::fromString('192.168.1.18');
     $ip4Range = IPv4Range::fromIPWithCIDRPrefix($ip4min, 24);
+    echo $ip4Range->toString() . "\n";
+    // output: 192.168.1.0 - 192.168.1.255
 
 IPv6Range works the same way with IPv6Address of course.
 
-You can always get the minimum and maximum IP addresses:
+You can also get the minimum and maximum IP addresses without :code:`toString()`:
 
 .. code-block:: php
 
     <?php
+    // ...
     echo $ip4Range->getMinIP()->toString();
     echo " - ";
     echo $ip4Range->getMaxIP()->toString();
     // output: 192.168.1.0 - 192.168.1.255
 
-Currently this is the same as calling toString() on an IP range instance.
-
-.. code-block:: php
-
-    <?php
-    echo $ip4Range->toString();
-
 This only for testing and debugging. Do not use it to check if two ranges are equal!
 
-If a range was instantiated by fromIPWithCIDRPrefix(), you get the prefix at any time.
+If a range was instantiated by :code:`fromIPWithCIDRPrefix()`, you can get the prefix any time.
 Otherwise, it will be null.
 
 .. code-block:: php
 
     <?php
-    echo $ip4Range->getCIDRPrefix();
+    // ...
+    echo $ip4Range->getCIDRPrefix() . "\n";
+    // output: 24
 
-You can check if a range is in an other:
+You can check if a range is in another range:
 
 .. code-block:: php
 
     <?php
-    if ($ip4Range->in($largerIp4Range)) {
+    // ...
+    if ($ip4Range->in($largeIP4Range)) {
         echo 'ip4Range is in largerIp4Range';
     }
 
-When a range was created by fromIPInterval() or fromBinaryInterval(), converting it to one CIDR notation
-is not always possible. Use toCIDRNotations() on the instance of the range. This returns an array with
-new IP range instances. They are all created by fromIPWithCIDRPrefix()
+When a range was created by :code:`fromIPInterval()` or :code:`fromBinaryInterval()`, converting it to one CIDR notation
+is not always possible. Use :code:`toCIDRNotations()` on the instance of the range. This returns an array with
+new IP range instances. They are all created by :code:`fromIPWithCIDRPrefix()`
 
 .. code-block:: php
 
     <?php
-    $ip4min = IPv4Address::fromString('192.168.1.0');
-    $ip4max = IPv4Address::fromString('192.168.2.0');
+    $ip4min = IPv4Address::fromString('192.168.0.3');
+    $ip4max = IPv4Address::fromString('192.168.2.18');
 
     $ip4Range = IPv4Range::fromIPInterval($ip4min, $ip4max);
     foreach ($ip4Range->toCIDRNotations() as $CIDRNotation) {
         echo $CIDRNotation->getMinIP() . '/' . $CIDRNotation->getCIDRPrefix() . "\n";
     }
     // output:
+    // 192.168.0.3/32
+    // 192.168.0.4/30
+    // 192.168.0.8/29
+    // 192.168.0.16/28
+    // 192.168.0.32/27
+    // 192.168.0.64/26
+    // 192.168.0.128/25
     // 192.168.1.0/24
-    // 192.168.2.0/32
+    // 192.168.2.0/28
+    // 192.168.2.16/31
+    // 192.168.2.18/32
