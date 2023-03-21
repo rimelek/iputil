@@ -19,51 +19,59 @@ convert to and from. Here are all off them:
 - **string**: Well, each version is a string, but this is the general representation of an
   IP address which is for example 127.0.0.1 or ::FFFF:7F00:1.
 
+First we need the autoloader
+
+.. code-block:: php
+
+    <?php
+    require_once 'vendor/autoload.php';
+  
 Let's see how to convert addresses
 
 .. code-block:: php
 
     <?php
+    // ...
     use Rimelek\IPUtil\IPv4Address;
 
     // from IPv4 binary string to string
     $ip4 = IPv4Address::fromBinary("\x7f\x00\x00\x01");
-    echo $ip4->toString();
+    echo $ip4->toString() . "\n";
     // output: 127.0.0.1
 
     // from IPv4 string to bit string
     $ip4 = IPv4Address::fromBinary("127.0.0.1");
-    echo $ip4->toBitString();
+    echo $ip4->toBitString() . "\n";
     // output: 01111111000000000000000000000001
 
     $ip4 = IPv4Address::fromBitString("01111111000000000000000000000001");
-    $binary = $ip4->toBinary();
-    // It is not printable so do not use it to show an IP address
+    echo bin2hex($ip4->toBinary()) . "\n";
 
 You can do the same with IPv6
 
 .. code-block:: php
 
     <?php
+    // ..
     use Rimelek\IPUtil\IPv6Address;
 
     // from IPv6 binary string to string
     $ip6 = IPv4Address::fromBinary("\0\0\0\0\0\0\0\0\0\0\xFF\xFF\x7F\x00\x00\x01");
-    echo $ip6->toString(); // This is an alias of $ipv6->toString(IPv6Address::LENGTH_SHORT);
+    echo $ip6->toString() . "\n"; // This is an alias of $ipv6->toString(IPv6Address::LENGTH_SHORT);
     // output: ::ffff:7f00:1
-    echo $ip6->toString(IPv6Address::LENGTH_MEDIUM);
+    echo $ip6->toString(IPv6Address::LENGTH_MEDIUM) . "\n";
     // output: 0:0:0:0:0:ffff:7f00:1
-    echo $ip6->toString(IPv6Address::LENGTH_LONG);
+    echo $ip6->toString(IPv6Address::LENGTH_LONG) . "\n";
     // output: 0000:0000:0000:0000:0000:ffff:7f00:0001
 
     // from IPv6 string to bit string
     $ip6 = IPv6Address::fromBinary("::ffff:7f00:1");
-    echo $ip6->toBitString();
+    echo $ip6->toBitString() . "\n";
     // output: 00000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111101111111000000000000000000000001
 
     $ip6 = IPv6Address::fromBitString("00000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111101111111000000000000000000000001");
-    $binary = $ip6->toBinary();
-    // It is not printable so do not use it to show an IP address
+    echo bin2hex($ip6->toBinary()) . "\n";
+    // output: 00000000000000000000ffff7f000001
 
 And you can convert an IPv4 address to IPv6 or IPv6 address to IPv4
 
@@ -71,8 +79,14 @@ And you can convert an IPv4 address to IPv6 or IPv6 address to IPv4
 
     <?php
     // ...
+    $ip4 = IPv4Address::fromString('192.168.1.1');
     $ip6 = $ip4->toIPv6();
+    echo $ip6->toString() . "\n";
+    // output: ::ffff:c0a8:101
+
     $ip4 = $ip6->toIPv4();
+    echo $ip4->toString() . "\n";
+    // output: ::ffff:c0a8:101
 
 or
 
@@ -81,7 +95,12 @@ or
     <?php
     // ...
     $ip6 = IPv6Address::fromIPv4($ip4);
+    echo $ip6->toString() . "\n";
+    // output: ::ffff:c0a8:101
+
     $ip4 = IPv4Address::fromIPv6($ip6);
+    echo $ip4->toString() . "\n";
+    // output: ::ffff:c0a8:101
 
 CIDR prefix is a number that tells you how many bits are set in the IP mask from left to right followed by zeros only.
 If you need IP mask, you can create it from CIDR prefix.
@@ -91,11 +110,11 @@ If you need IP mask, you can create it from CIDR prefix.
     <?php
     // ...
     $ip4Mask = IPv4Address::fromCIDRPrefix(24);
-    echo $ip4Mask->toString();
+    echo $ip4Mask->toString() . "\n";
     // output: 255.255.255.0
 
     $ip6Mask = IPv6Address::fromCIDRPrefix(40);
-    echo $ip6Mask->toString();
+    echo $ip6Mask->toString() . "\n";
     // output: ffff:ffff:ff00::
 
 Not all IPv6 addresses are compatible with IPv4. If you do not want to get an exception when you call $ip6->toIPv4(),
@@ -105,9 +124,15 @@ use isCompatibleWithIPv4() to check if it is compatible.
 
     <?php
     // ...
-    if ($ip6->isCompatibleWithIPv4()) {
-        $ip4 = $ip6->toIPv4();
-    }
+    $ip6 = IPv6Address::fromString('2620:2d:4000:1::16');
+    echo $ip6->isCompatibleWithIPv4() ? 'Compatible' : 'Incompatible';
+    echo "\n";
+    // output: Incompatible
+
+    $ip6 = IPv6Address::fromString('::ffff:c0a8:101');
+    echo $ip6->isCompatibleWithIPv4() ? 'Compatible' : 'Incompatible';
+    echo "\n";
+    // output: Compatible
 
 You can get some additional information about an IPv4 address like IP class and high order bits
 
@@ -116,8 +141,11 @@ You can get some additional information about an IPv4 address like IP class and 
     <?php
     // ...
     $ip4 = IPv4Address::fromString('192.168.1.1');
-    echo $ip4->getIPClass();
+    echo $ip4->getIPClass() . "\n";
     // output: C
+    $ip4 = IPv4Address::fromString('172.17.1.1');
+    echo $ip4->getIPClass() . "\n";
+    // output: B
 
 The above check based on high order bits. You can get the high order bits of an IP class by calling getHighOrderBitsOfIPv4Class()
 
@@ -126,7 +154,7 @@ The above check based on high order bits. You can get the high order bits of an 
 
     <?php
     // ...
-    echo IPv4Address::getHighOrderBitsOfIPv4Class('C');
+    echo IPv4Address::getHighOrderBitsOfIPv4Class('C') . "\n";
     // output: 110
 
 IP ranges
