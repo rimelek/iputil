@@ -21,3 +21,8 @@
 # Sphinx files
 /docs/_*
 /docs/.env
+
+# Operating system specific
+
+## macOS
+.DS_Store
