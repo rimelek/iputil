@@ -31,7 +31,7 @@ class IPv4Address extends AbstractIPAddress implements IPAddressFactoryInterface
         $parts = explode('.', $IPv4, 4) + [0,0,0,0];
         
         $binary = '';
-        foreach ($parts as &$part) {
+        foreach ($parts as $part) {
             $binary .= chr(intval($part));
         }
         return self::fromBinary($binary);
