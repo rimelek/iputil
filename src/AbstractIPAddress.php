@@ -34,7 +34,7 @@ abstract class AbstractIPAddress implements IPAddressInterface
     }
 
     /**
-     * Convert the IP Address to it's string representation
+     * Convert the IP Address to its string representation
      *
      * @return string
      */
