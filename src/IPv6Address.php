@@ -23,30 +23,30 @@ class IPv6Address extends AbstractIPAddress implements IPAddressFactoryInterface
     /**
      * Create IPv6Address instance from IPv6 string
      * 
-     * @param string $IPv6
+     * @param string $IP
      * @return IPv6Address
      */
-    public static function fromString($IPv6)
+    public static function fromString($IP)
     {
-        $pos = strpos($IPv6, '::');
+        $pos = strpos($IP, '::');
         if ($pos !== false) {
-            $left = substr($IPv6, 0, $pos);
-            $right = substr($IPv6, $pos + 2);
+            $left = substr($IP, 0, $pos);
+            $right = substr($IP, $pos + 2);
             $cLeft = substr_count($left, ':');
             $cRight = substr_count($right, ':');
-            if ($IPv6 === '::') {
-                $IPv6 = '0:0:0:0:0:0:0:0';
+            if ($IP === '::') {
+                $IP = '0:0:0:0:0:0:0:0';
             } elseif ($pos === 0) {
-                $IPv6 = str_repeat('0:', 8 - ($cRight + 1)).$right;
-            } elseif ($pos === strlen($IPv6) - 2) {
-                $IPv6 = $left.str_repeat(':0', 8 - ($cLeft + 1));
+                $IP = str_repeat('0:', 8 - ($cRight + 1)).$right;
+            } elseif ($pos === strlen($IP) - 2) {
+                $IP = $left.str_repeat(':0', 8 - ($cLeft + 1));
             } else {
-                $IPv6 = $left.str_repeat(':0', 8 - ($cLeft + $cRight + 2)).':'.$right;
+                $IP = $left.str_repeat(':0', 8 - ($cLeft + $cRight + 2)).':'.$right;
             }
 
         }
         
-        $IPv6Parts = explode(':', $IPv6);
+        $IPv6Parts = explode(':', $IP);
         $bytes = "";
         for ($i = count($IPv6Parts)-1; $i >= 0; $i--) {
             $dec = base_convert($IPv6Parts[$i] ?: '0', 16, 10);

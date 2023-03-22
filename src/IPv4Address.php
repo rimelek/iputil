@@ -23,12 +23,12 @@ class IPv4Address extends AbstractIPAddress implements IPAddressFactoryInterface
     /**
      * Create IPv4Address instance from IPv4 string
      * 
-     * @param string $IPv4 Ex.: 10.8.1.5
+     * @param string $IP Ex.: 10.8.1.5
      * @return IPv4Address
      */
-    public static function fromString($IPv4)
+    public static function fromString($IP)
     {
-        $parts = explode('.', $IPv4, 4) + [0,0,0,0];
+        $parts = explode('.', $IP, 4) + [0,0,0,0];
         
         $binary = '';
         foreach ($parts as $part) {
