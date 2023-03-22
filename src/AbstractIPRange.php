@@ -232,11 +232,12 @@ abstract class AbstractIPRange implements IPRangeInterface
      * 
      * The minimum IP address can only be even and the maximum must be odd.
      *
-     * @return self[]
+     * @return self[] Associative array. Keys: firstRange, lastRange
      * 
      */
     private function cleanBoundariesOfRange()
     {
+        /* @var $ranges self[]  */
         $ranges = [
             'firstRange' => null,
             'lastRange' => null

@@ -47,12 +47,13 @@ class IPv4Address extends AbstractIPAddress implements IPAddressFactoryInterface
     {
         return self::fromBinary(self::CIDRPrefixToBinaryMask($CIDRPrefix, 32));
     }
-    
+
     /**
      * Create IPv4Address instance from IPv6 instance
-     * 
+     *
      * @param IPv6Address $IPv6
      * @return IPv4Address
+     * @throws Exception
      */
     public static function fromIPv6(IPv6Address $IPv6)
     {
