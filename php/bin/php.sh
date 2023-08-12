@@ -111,6 +111,7 @@ if (( "$IMAGE_COUNT" == 0 )); then
       --build-arg "PHP_VERSION=$PHP_VERSION" \
       --build-arg "XDEBUG_VERSION=$XDEBUG_VERSION" \
       --no-cache \
+      --progress plain \
       --tag "$IMAGE_NAME"
       
     IMAGE_COUNT=$(docker image list | grep -c "$IMAGE_NAME" || true)
