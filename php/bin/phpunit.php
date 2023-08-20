@@ -1,5 +1,7 @@
 <?php
 
+# TODO: move the logic completely to php.sh
+
 # See https://phpunit.de/supported-versions.html
 
 $currDir = dirname($argv[0]);
@@ -39,10 +41,10 @@ if (!file_exists($phpUnitPharPath)) {
 
 array_shift($argv);
 
-$cmd = ['php', escapeshellcmd($phpUnitPharPath)];
+echo $phpUnitPharPath . "\n";
 foreach ($argv as $k => $v) {
     if ($k > 0 and $argv[$k - 1] == '--configuration') {
-        $cmd[] = $phpUnitXMLCache;
+        echo $phpUnitXMLCache . "\n";
         continue;
     }
     
@@ -50,11 +52,5 @@ foreach ($argv as $k => $v) {
     if ($phpVersion == '5.6' and $v == '--teamcity') {
         continue;
     }
-    $cmd[] = escapeshellarg($v);
+    echo $v . "\n";
 }
-
-passthru(join(' ', $cmd), $exitCode);
-
-exit($exitCode);
-
-

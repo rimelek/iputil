@@ -48,8 +48,8 @@ Custom PHP interpreters
 - :code:`./php/bin/php-all.sh`: A special interpreter which runs the command with each custom PHP interpreter.
   Using this script you can see the test result for each PHP version where the test suite name contains
   the version number.
-- :code:`./php/bin/phpunit.php`: This PHP script runs inside the container of the PHP interpreter and changes some of the
-  parameters which was not handled in :code:`php.sh`. It is responsible for downloading a compatible version
+- :code:`./php/bin/phpunit.php`: This PHP script runs inside the container of the PHP interpreter and generates some of the
+  parameters which was not handled in :code:`php.sh`. It is also responsible for downloading a compatible version
   of PHPUnit as a PHP Archive (phar).
 
 
@@ -91,7 +91,19 @@ command before the actual test just for downloading the base images and building
 
   ./php/bin/php-all.sh --version
 
-This custom interpreters was created to use with PHPStorm. PHPStorm supports to choose Docker container as
-interpreter, but in that case, you could would need much more manual configurations.
+These custom interpreters was created to use with PHPStorm. PHPStorm supports to choose Docker container as
+interpreter, but in that case, you would need much more manual configurations.
 These custom interpreters can be set as local interpreters and will give the same output as any PHP interpreter would
 do.
+
+Depending on the PHP version `xdebug.remote_host` (PHP 7.1 and below) or `xdebug.client_host` (PHP 7.2 and above)
+parameters can be set to send the debug data back to the right host. Optionally, you can create a `.env` file in the
+project root and add 
+
+.. code-block:: bash
+
+  export XDEBUG_CLIENT_HOST=host.docker.internal
+
+`host.docker.internal` is the default value too, but you cans et any IP addresses if you are not using Docker Desktop.
+
+

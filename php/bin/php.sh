@@ -32,6 +32,10 @@ PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
 
 ARGS=("$@")
 
+if [[ -f "$PROJECT_ROOT/.env" ]]; then
+  source "$PROJECT_ROOT/.env"
+fi
+
 function arg_value_of() {
   local i
   local arg="$1"
@@ -71,6 +75,15 @@ function arg_exists() {
   arg_value_of "$1" >/dev/null || ret=$?
   
   (( ret < 2))
+}
+
+function docker_php() {
+  docker run --rm "${MOUNT_PATHS[@]}" \
+    -u "$(id -u):$(id -g)" \
+    -w "$PWD" \
+    "$IMAGE_NAME" \
+    php \
+    "$@"
 }
 
 if arg_exists "$PHP_UNIT_PATH" \
@@ -126,10 +139,61 @@ if (( "$IMAGE_COUNT" > 1 )); then
     exit 1
 fi
 
-# XDEBUG_MODE is required for PHP 7.2 and above
-docker run --rm "${MOUNT_PATHS[@]}" \
-  -u "$(id -u):$(id -g)" \
-  -w "$PWD" \
-  -e XDEBUG_MODE=coverage \
-  "$IMAGE_NAME" \
-  php "${ARGS[@]}"
+if arg_exists "$PHP_UNIT_PATH"; then
+  PHP_UNIT_CMD=()
+  for i in "${ARGS[@]}"; do
+    if [[ "$i" == "$PHP_UNIT_PATH" ]]; then
+      break
+    fi
+    if [[ "${i:0:2}" == "-d" ]]; then
+      directive="${i:2}"
+      directive_key="$(echo "$directive" | cut -d= -f1)"
+      # directive_val="$(echo "$directive" | cut -d= -f2)"
+      case "$directive_key" in 
+        xdebug.remote_host|xdebug.client_host)
+          continue
+          ;;  
+      esac
+    fi
+    PHP_UNIT_CMD=("${PHP_UNIT_CMD[@]}" "$i")
+  done
+  mapfile -t PHP_UNIT_PHAR_CMD < <(docker_php "${ARGS[@]}")
+  ARGS=("${PHP_UNIT_CMD[@]}" "${PHP_UNIT_PHAR_CMD[@]}")
+fi
+
+
+if [[ "${XDEBUG_CLIENT_HOST:-}" == "" ]]; then
+  os="$(docker info --format "{{ .OperatingSystem }}")"
+  if [[ "$os" == "Docker Desktop" ]]; then
+    XDEBUG_CLIENT_HOST=host.docker.internal
+  else
+    XDEBUG_CLIENT_HOST="172.17.0.1"
+  fi
+fi
+
+PHP_DIRECTIVES_7_1_AND_BELOW=(
+  # -dxdebug.remote_enable=1
+  # -dxdebug.remote_mode=req
+  # -dxdebug.remote_port=9003
+  -dxdebug.remote_host="$XDEBUG_CLIENT_HOST"
+  -dxdebug.remote_autostart=1
+)
+
+PHP_DIRECTIVES_7_2_AND_ABOVE=(
+  # -dxdebug.mode=debug
+  # -dxdebug.client_port=9003
+  -dxdebug.client_host="$XDEBUG_CLIENT_HOST"
+  # -dxdebug.start_upon_error=yes
+  -dxdebug.start_with_request=yes
+)
+
+case "$PHP_VERSION" in
+  5.6|7.0|7.1)
+    PHP_DIRECTIVES=("${PHP_DIRECTIVES_7_1_AND_BELOW[@]}")
+    ;;
+  *)
+    PHP_DIRECTIVES=("${PHP_DIRECTIVES_7_2_AND_ABOVE[@]}")
+    ;;
+esac
+
+docker_php "${PHP_DIRECTIVES[@]}" "${ARGS[@]}"
