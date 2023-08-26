@@ -25,10 +25,28 @@ declare -A PHP_XDEBUG_VERSIONS=(
   [8.2]="3.2.0"
 )
 
+declare -A PHP_UNIT_VERSIONS=(
+  [5.6]='4.8'
+  [7.0]='6.5'
+  [7.1]='7.5'
+  [7.2]='8.5'
+  [7.3]='8.5'
+  [7.4]='8.5'
+  [8.0]='9.6'
+  [8.1]='9.6'
+  [8.2]='9.6'
+)
+
 XDEBUG_VERSION="${PHP_XDEBUG_VERSIONS[$PHP_VERSION]}"
+PHP_UNIT_VERSION="${PHP_UNIT_VERSIONS[$PHP_VERSION]}"
 PROJECT_ROOT="$(cd "$CURR_DIR/../.." && pwd)"
 PHP_UNIT_PATH="$PROJECT_ROOT/php/bin/phpunit.php"
-PHP_UNIT_XML_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
+PHP_UNIT_CACHE_DIR="$PROJECT_ROOT/php/phpunit"
+PHP_UNIT_XML_CACHE_DIR="$PHP_UNIT_CACHE_DIR"
+PHP_UNIT_PHAR_PATH="$PHP_UNIT_CACHE_DIR/phpunit-$PHP_UNIT_VERSION.phar"
+PHP_UNIT_PHAR_URL="https://phar.phpunit.de/phpunit-$PHP_UNIT_VERSION.phar"
+PHP_UNIT_XML="$PROJECT_ROOT/php/phpunit/phpunit-$PHP_UNIT_VERSION.xml"
+PHP_UNIT_XML_CACHE="$PHP_UNIT_XML_CACHE_DIR/phpunit.php-$PHP_VERSION.xml"
 
 ARGS=("$@")
 
@@ -77,18 +95,10 @@ function arg_exists() {
   (( ret < 2))
 }
 
-function docker_php() {
-  docker run --rm "${MOUNT_PATHS[@]}" \
-    -u "$(id -u):$(id -g)" \
-    -w "$PWD" \
-    "$IMAGE_NAME" \
-    php \
-    "$@"
-}
-
 if arg_exists "$PHP_UNIT_PATH" \
 && arg_exists "--configuration"; then
   mkdir -p "$PHP_UNIT_XML_CACHE_DIR"
+  arg_value_set "--configuration" "$PHP_UNIT_XML_CACHE"
   if [[ "$PHP_VERSION" != "7.0" ]] && [[ "$PHP_VERSION" != "5.6" ]]; then
     arg_value_set "--cache-result-file" "$PHP_UNIT_XML_CACHE_DIR/.phpunit.result.php-$PHP_VERSION.cache"
   fi 
@@ -141,24 +151,41 @@ fi
 
 if arg_exists "$PHP_UNIT_PATH"; then
   PHP_UNIT_CMD=()
+  is_unit_phar_arg=0
   for i in "${ARGS[@]}"; do
     if [[ "$i" == "$PHP_UNIT_PATH" ]]; then
-      break
+      is_unit_phar_arg=1
+      continue;
     fi
-    if [[ "${i:0:2}" == "-d" ]]; then
-      directive="${i:2}"
-      directive_key="$(echo "$directive" | cut -d= -f1)"
-      # directive_val="$(echo "$directive" | cut -d= -f2)"
-      case "$directive_key" in 
-        xdebug.remote_host|xdebug.client_host)
-          continue
-          ;;  
-      esac
+    
+    if [[ "$is_unit_phar_arg" == "0" ]]; then
+      if [[ "${i:0:2}" == "-d" ]]; then
+        directive="${i:2}"
+        directive_key="$(echo "$directive" | cut -d= -f1)"
+        # directive_val="$(echo "$directive" | cut -d= -f2)"
+        case "$directive_key" in 
+          xdebug.remote_host|xdebug.client_host)
+            continue
+            ;;  
+        esac
+      fi
+      PHP_UNIT_CMD=("${PHP_UNIT_CMD[@]}" "$i")
+    else
+      if [[ "$PHP_VERSION" == "5.6" ]] && [[ "$i" == "--teamcity" ]]; then
+        # PHPStorm fix for PHP 5.6
+        continue
+      fi
+      PHP_UNIT_PHAR_CMD+=("$i")
     fi
-    PHP_UNIT_CMD=("${PHP_UNIT_CMD[@]}" "$i")
   done
-  mapfile -t PHP_UNIT_PHAR_CMD < <(docker_php "${ARGS[@]}")
-  ARGS=("${PHP_UNIT_CMD[@]}" "${PHP_UNIT_PHAR_CMD[@]}")
+  
+  PHP_UNIT_TESTSUITE_NAME="test $PHP_VERSION" \
+    envsubst \$PHP_UNIT_TESTSUITE_NAME < "$PHP_UNIT_XML" > "$PHP_UNIT_XML_CACHE"
+  if [[ ! -f "$PHP_UNIT_PHAR_PATH" ]]; then
+    curl --silent -L "$PHP_UNIT_PHAR_URL" --output "$PHP_UNIT_PHAR_PATH"
+  fi  
+  
+  ARGS=("${PHP_UNIT_CMD[@]}" "$PHP_UNIT_PHAR_PATH" "${PHP_UNIT_PHAR_CMD[@]}")
 fi
 
 
@@ -196,4 +223,10 @@ case "$PHP_VERSION" in
     ;;
 esac
 
-docker_php "${PHP_DIRECTIVES[@]}" "${ARGS[@]}"
+docker run --rm "${MOUNT_PATHS[@]}" \
+    -u "$(id -u):$(id -g)" \
+    -w "$PWD" \
+    "$IMAGE_NAME" \
+    php \
+    "${PHP_DIRECTIVES[@]}" \
+    "${ARGS[@]}"

@@ -48,9 +48,10 @@ Custom PHP interpreters
 - :code:`./php/bin/php-all.sh`: A special interpreter which runs the command with each custom PHP interpreter.
   Using this script you can see the test result for each PHP version where the test suite name contains
   the version number.
-- :code:`./php/bin/phpunit.php`: This PHP script runs inside the container of the PHP interpreter and generates some of the
-  parameters which was not handled in :code:`php.sh`. It is also responsible for downloading a compatible version
-  of PHPUnit as a PHP Archive (phar).
+- :code:`./php/bin/phpunit.php`: This file is just a placeholder which will never be used, but can be set
+  in PHPStorm or other IDEs that require a phpunit script to be set.
+  The :code:`php.sh` script will look for the path of this PHP file in the argument list
+  to determine whether it is running PHPUnit or another PHP file.
 
 
 Then run the following command to test in terminal:
